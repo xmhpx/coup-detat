@@ -169,14 +169,14 @@ public class GameLogicCenter {
 
 
 
-    public boolean foreignAid2(Player player){
+    public boolean foreignAid(Player player){
         if(!player.isAlive())return false;
 
         player.setCoins(player.getCoins()+2);
         return true;
     }
 
-    public boolean foreignAid3(Player player){
+    public boolean takeFromTreasury(Player player){
         if(!player.isAlive())return false;
 
         player.setCoins(player.getCoins()+3);
