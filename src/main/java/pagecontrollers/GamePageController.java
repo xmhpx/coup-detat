@@ -57,7 +57,7 @@ public class GamePageController extends BasicPageController{
     Button SwapOneButton;
 
     @FXML
-    Button ExchangeButton;
+    Button AmbassadorExchangeButton;
     @FXML
     Button StealButton;
     @FXML
@@ -154,7 +154,7 @@ public class GamePageController extends BasicPageController{
 
 
     @FXML
-    void ExchangeButtonOnAction(ActionEvent actionEvent) {
+    void AmbassadorExchangeButtonOnAction(ActionEvent actionEvent) {
     }
 
     @FXML

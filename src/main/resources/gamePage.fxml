@@ -31,7 +31,7 @@
       <Button fx:id="CoupButton" layoutX="309.0" layoutY="243.0" mnemonicParsing="false" onAction="#CoupButtonOnAction" text="Coup D'etat" />
       <Button fx:id="SwapOneButton" layoutX="314.0" layoutY="272.0" mnemonicParsing="false" onAction="#SwapOneButtonOnAction" text="Swap One" />
 
-      <Button fx:id="ExchangeButton" layoutX="424.0" layoutY="185.0" mnemonicParsing="false" onAction="#ExchangeButtonOnAction" text="Exchange" />
+      <Button fx:id="AmbassadorExchangeButton" layoutX="388.0" layoutY="185.0" mnemonicParsing="false" onAction="#AmbassadorExchangeButtonOnAction" text="Ambassador Exchange" />
       <Button fx:id="StealButton" layoutX="435.0" layoutY="214.0" mnemonicParsing="false" onAction="#StealButtonOnAction" text="Steal" />
       <Button fx:id="AssassinateButton" layoutX="421.0" layoutY="243.0" mnemonicParsing="false" onAction="#AssassinateButtonOnAction" text="Assassinate" />
       <Button fx:id="TakeFromTreasuryButton" layoutX="397.0" layoutY="272.0" mnemonicParsing="false" onAction="#TakeFromTreasuryButtonOnAction" text="Take From Treasury" />
