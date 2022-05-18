@@ -2,6 +2,8 @@ package logic;
 
 import modules.Player;
 import modules.cardtypes.*;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -10,6 +12,8 @@ import java.util.Random;
 //TODO if someone tries to assassinate but fails, they'll get their money back
 
 public class GameLogicCenter {
+    private static final Logger log = LogManager.getLogger(GameLogicCenter.class);
+
     private static GameLogicCenter INSTANCE;
 
     public static GameLogicCenter getInstance(){

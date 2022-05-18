@@ -1,6 +1,11 @@
 package modules.cardtypes;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class Card {
+    private static final Logger log = LogManager.getLogger(Card.class);
+
     protected String name;
     protected String description;
     protected boolean isAlive;

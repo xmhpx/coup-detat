@@ -1,6 +1,11 @@
 package modules.cardtypes;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class Assassin extends Card {
+    private static final Logger log = LogManager.getLogger(Assassin.class);
+
     public static final String name = "Assassin";
     public static final String description =
             "1. Pay three coins to assassinate one of another player's card(s).";

@@ -1,8 +1,13 @@
 package modules;
 
 import modules.cardtypes.Card;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import pagecontrollers.BasicPageController;
 
 public class Player {
+    private static final Logger log = LogManager.getLogger(Player.class);
+
     protected String name;
     protected Card leftCard;
     protected Card rightCard;
