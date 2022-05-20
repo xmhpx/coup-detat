@@ -12,13 +12,20 @@ public class Captain extends Card {
             "1. Steal two coins from another player.\n" +
             "2. Block anyone from stealing from you.";
     public static final String imagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\Captain.jpg";
+    public static final String deadImagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\DeadCaptain.jpg";
 
     public Captain(boolean isAlive, int cardNumber) {
         super(name, description, isAlive, cardNumber);
     }
 
 
+    @Override
     public Image getImage(){
         return new Image(imagePath);
+    }
+
+    @Override
+    public Image getDeadImage(){
+        return new Image(deadImagePath);
     }
 }

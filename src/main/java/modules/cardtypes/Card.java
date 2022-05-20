@@ -26,6 +26,10 @@ public class Card {
         return null;
     }
 
+    public Image getDeadImage(){
+        return null;
+    }
+
     public static Image getBackImage(){
         return new Image(backImagePath);
     }

@@ -372,82 +372,89 @@ public class GamePageController extends BasicPageController{
         BackgroundSize backgroundSize = new BackgroundSize(1, 1,
                 true, true,
                 false, false);
-        backgroundImage = new BackgroundImage(player.getLeftCard().getImage(),
-                null, null, null, backgroundSize);
+
+        if(player.getLeftCard().isAlive()) {
+            backgroundImage = new BackgroundImage(player.getLeftCard().getImage(),
+                    null, null, null, backgroundSize);
+        }
+        else{
+            backgroundImage = new BackgroundImage(player.getLeftCard().getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
         playerLeftCardButton.setBackground(new Background(backgroundImage));
 
-        backgroundImage = new BackgroundImage(player.getRightCard().getImage(),
-                null, null, null, backgroundSize);
+        if(player.getRightCard().isAlive()) {
+            backgroundImage = new BackgroundImage(player.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+        }
+        else {
+            backgroundImage = new BackgroundImage(player.getRightCard().getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
         playerRightCardButton.setBackground(new Background(backgroundImage));
 
 
         if(!bot1.getLeftCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot1.getLeftCard().getImage(),
+            backgroundImage = new BackgroundImage(bot1.getLeftCard().getDeadImage(),
                     null, null, null, backgroundSize);
-            bot1LeftCardButton.setBackground(new Background(backgroundImage));
         }
         else{
             backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
-            bot1LeftCardButton.setBackground(new Background(backgroundImage));
         }
+        bot1LeftCardButton.setBackground(new Background(backgroundImage));
 
         if(!bot1.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot1.getRightCard().getImage(),
+            backgroundImage = new BackgroundImage(bot1.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
-            bot1RightCardButton.setBackground(new Background(backgroundImage));
         }
         else{
             backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
-            bot1RightCardButton.setBackground(new Background(backgroundImage));
         }
+        bot1RightCardButton.setBackground(new Background(backgroundImage));
 
 
-        if(!bot2.getLeftCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot2.getLeftCard().getImage(),
-                    null, null, null, backgroundSize);
-            bot2LeftCardButton.setBackground(new Background(backgroundImage));
-        }
-        else{
+        if(bot2.getLeftCard().isAlive()) {
             backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
-            bot2LeftCardButton.setBackground(new Background(backgroundImage));
         }
+        else {
+            backgroundImage = new BackgroundImage(bot2.getLeftCard().getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
+        bot2LeftCardButton.setBackground(new Background(backgroundImage));
 
         if(!bot2.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot2.getRightCard().getImage(),
+            backgroundImage = new BackgroundImage(bot2.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
-            bot2RightCardButton.setBackground(new Background(backgroundImage));
         }
         else{
             backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
-            bot2RightCardButton.setBackground(new Background(backgroundImage));
         }
+        bot2RightCardButton.setBackground(new Background(backgroundImage));
 
 
         if(!bot3.getLeftCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot3.getLeftCard().getImage(),
+            backgroundImage = new BackgroundImage(bot3.getLeftCard().getDeadImage(),
                     null, null, null, backgroundSize);
-            bot3LeftCardButton.setBackground(new Background(backgroundImage));
         }
         else{
             backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
-            bot3LeftCardButton.setBackground(new Background(backgroundImage));
         }
+        bot3LeftCardButton.setBackground(new Background(backgroundImage));
 
         if(!bot3.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot3.getRightCard().getImage(),
+            backgroundImage = new BackgroundImage(bot3.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
-            bot3RightCardButton.setBackground(new Background(backgroundImage));
         }
         else{
             backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
-            bot3RightCardButton.setBackground(new Background(backgroundImage));
         }
+        bot3RightCardButton.setBackground(new Background(backgroundImage));
     }
 
     public void loadCoins(){

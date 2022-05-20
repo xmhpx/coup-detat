@@ -11,13 +11,20 @@ public class Contessa extends Card {
     public static final String description =
             "1. Block assassination attempts against you.";
     public static final String imagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\Contessa.jpg";
+    public static final String deadImagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\DeadContessa.jpg";
 
     public Contessa(boolean isAlive, int cardNumber) {
         super(name, description, isAlive, cardNumber);
     }
 
 
+    @Override
     public Image getImage(){
         return new Image(imagePath);
+    }
+
+    @Override
+    public Image getDeadImage(){
+        return new Image(deadImagePath);
     }
 }

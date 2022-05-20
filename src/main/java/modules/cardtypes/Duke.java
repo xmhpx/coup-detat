@@ -12,13 +12,19 @@ public class Duke extends Card {
             "1. Take three coins from treasury.\n" +
             "2. Block anyone from taking the foreign aid action.";
     public static final String imagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\Duke.jpg";
+    public static final String deadImagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\DeadDuke.jpg";
 
     public Duke(boolean isAlive, int cardNumber) {
         super(name, description, isAlive, cardNumber);
     }
 
-
+    @Override
     public Image getImage(){
         return new Image(imagePath);
+    }
+
+    @Override
+    public Image getDeadImage(){
+        return new Image(deadImagePath);
     }
 }

@@ -12,13 +12,20 @@ public class Ambassador extends Card {
             "1. Draw two character cards from the draw deck, choose two to keep (from the 4 you now have) and return two.\n" +
             "2. Block anyone from stealing from you.";
     public static final String imagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\Ambassador.jpg";
+    public static final String deadImagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\DeadAmbassador.jpg";
 
     public Ambassador(boolean isAlive, int cardNumber) {
         super(name, description, isAlive, cardNumber);
     }
 
 
+    @Override
     public Image getImage(){
         return new Image(imagePath);
+    }
+
+    @Override
+    public Image getDeadImage(){
+        return new Image(deadImagePath);
     }
 }
