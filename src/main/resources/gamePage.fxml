@@ -47,7 +47,7 @@
       <Button fx:id="assassinateButton" layoutX="421.0" layoutY="243.0" mnemonicParsing="false" onAction="#AssassinateButtonOnAction" text="Assassinate" />
       <Button fx:id="takeFromTreasuryButton" layoutX="397.0" layoutY="272.0" mnemonicParsing="false" onAction="#TakeFromTreasuryButtonOnAction" text="Take From Treasury" />
 
-      <TextField fx:id="targetTextField" layoutX="350.0" layoutY="302.0" prefHeight="26.0" prefWidth="99.0" promptText="Target Number" />
+      <TextField fx:id="targetTextField" layoutX="317.0" layoutY="302.0" prefHeight="26.0" prefWidth="99.0" promptText="Target Number" />
 
 
       <Button fx:id="interveneButton" layoutX="513.0" layoutY="393.0" mnemonicParsing="false" onAction="#InterveneButtonOnAction" text="Intervene" />
@@ -83,6 +83,13 @@
                </FXCollections>
             </items>
          </TableView>
+         <columnConstraints>
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
       </GridPane>
 
 
@@ -98,5 +105,6 @@
             <Image url="@Images/Manual.jpeg" />
          </image>
       </ImageView>
+      <TextField fx:id="leftOrRightTextField" layoutX="422.0" layoutY="303.0" prefHeight="26.0" prefWidth="80.0" promptText="left/right" />
    </children>
 </AnchorPane>

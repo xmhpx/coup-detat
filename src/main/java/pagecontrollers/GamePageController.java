@@ -69,6 +69,9 @@ public class GamePageController extends BasicPageController{
     @FXML
     Button swapOneButton;
 
+    Boolean swapLeft = null;
+
+
     @FXML
     Button ambassadorExchangeButton;
     @FXML
@@ -80,6 +83,8 @@ public class GamePageController extends BasicPageController{
 
     @FXML
     TextField targetTextField;
+    @FXML
+    TextField leftOrRightTextField;
 
 
     @FXML
@@ -120,6 +125,7 @@ public class GamePageController extends BasicPageController{
 
 
     public void pressButton(Button button){
+        swapLeft = null;
         if(selectedButton != null){
             selectedButton.setStyle("");
         }
@@ -147,6 +153,13 @@ public class GamePageController extends BasicPageController{
         if(targetTextField.getText().equals("3"))
             target = "bot3";
         return target;
+    }
+
+    public Boolean getIsLeft(){
+        Boolean isLeft = null;
+        if(leftOrRightTextField.getText().equals("left"))isLeft = true;
+        if(leftOrRightTextField.getText().equals("right"))isLeft = false;
+        return isLeft;
     }
 
 
@@ -178,8 +191,10 @@ public class GamePageController extends BasicPageController{
     public void refresh(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
 
+        Player player = backend.getPlayer(0);
         actionToBeConfirmedLabel.setText("");
         cardActionInfoLabel.setText("");
+        massageLabel.setText("");
         if(selectedButton != null){
             if(selectedButton == playerLeftCardButton){
                 Card card = backend.getPlayer(0).getLeftCard();
@@ -247,14 +262,37 @@ public class GamePageController extends BasicPageController{
                 String target = getTarget();
                 if(target == null){
                     massageLabel.setText("choose target to coup d'etat against");
-                    return;
                 }
-                cardActionInfoLabel.setText(ActionInfo.coupInfo()+"\ntarget:"+target);
-                actionToBeConfirmedLabel.setText(ActionName.coup()+"\ntarget:"+target);
+                else {
+                    cardActionInfoLabel.setText(ActionInfo.coupInfo() + "\ntarget:" + target);
+                    actionToBeConfirmedLabel.setText(ActionName.coup() + "\ntarget:" + target);
+                }
+
             }
             else if(selectedButton == swapOneButton){
+                Boolean isLeft = getIsLeft();
                 cardActionInfoLabel.setText(ActionInfo.swapOneInfo());
-                actionToBeConfirmedLabel.setText(ActionName.swapOne());
+                if(isLeft == null){
+                    massageLabel.setText("choose which card to swap (left/right)");
+                }
+                else {
+                    if (isLeft) {
+                        if (!player.getLeftCard().isAlive()) {
+                            massageLabel.setText("your selected card(left) is dead");
+                        } else {
+                            actionToBeConfirmedLabel.setText(ActionName.swapOne()+"(left)");
+                            swapLeft = true;
+                        }
+                    } else {
+                        if (!player.getRightCard().isAlive()) {
+                            massageLabel.setText("your selected card(right) is dead");
+                        } else {
+                            actionToBeConfirmedLabel.setText(ActionName.swapOne()+"(right)");
+                            swapLeft = false;
+                        }
+
+                    }
+                }
 
             }
             else if(selectedButton == ambassadorExchangeButton){
@@ -266,20 +304,22 @@ public class GamePageController extends BasicPageController{
                 String target = getTarget();
                 if(target == null){
                     massageLabel.setText("choose target to steal from");
-                    return;
                 }
-                cardActionInfoLabel.setText(ActionInfo.stealInfo()+"\ntarget:"+target);
-                actionToBeConfirmedLabel.setText(ActionName.steal()+"\ntarget:"+target);
+                else {
+                    cardActionInfoLabel.setText(ActionInfo.stealInfo() + "\ntarget:" + target);
+                    actionToBeConfirmedLabel.setText(ActionName.steal() + "\ntarget:" + target);
+                }
 
             }
             else if(selectedButton == assassinateButton){
                 String target = getTarget();
                 if(target == null){
                     massageLabel.setText("choose target to assassinate");
-                    return;
                 }
-                cardActionInfoLabel.setText(ActionInfo.assassinateInfo()+"\ntarget:"+target);
-                actionToBeConfirmedLabel.setText(ActionName.assassinate()+"\ntarget:"+target);
+                else {
+                    cardActionInfoLabel.setText(ActionInfo.assassinateInfo() + "\ntarget:" + target);
+                    actionToBeConfirmedLabel.setText(ActionName.assassinate() + "\ntarget:" + target);
+                }
 
             }
             else if(selectedButton == takeFromTreasuryButton){
@@ -307,7 +347,6 @@ public class GamePageController extends BasicPageController{
             actionToBeConfirmedLabel.setText("Skip");
             cardActionInfoLabel.setText("don't challenge");
         }
-        massageLabel.setText("");
         var data = tableView.getItems();
         data.clear();
         data.addAll(GameLogicCenter.getInstance().getMoves());
@@ -347,9 +386,19 @@ public class GamePageController extends BasicPageController{
                     null, null, null, backgroundSize);
             bot1LeftCardButton.setBackground(new Background(backgroundImage));
         }
+        else{
+            backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+            bot1LeftCardButton.setBackground(new Background(backgroundImage));
+        }
 
         if(!bot1.getRightCard().isAlive()) {
             backgroundImage = new BackgroundImage(bot1.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot1RightCardButton.setBackground(new Background(backgroundImage));
+        }
+        else{
+            backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
             bot1RightCardButton.setBackground(new Background(backgroundImage));
         }
@@ -360,9 +409,19 @@ public class GamePageController extends BasicPageController{
                     null, null, null, backgroundSize);
             bot2LeftCardButton.setBackground(new Background(backgroundImage));
         }
+        else{
+            backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+            bot2LeftCardButton.setBackground(new Background(backgroundImage));
+        }
 
         if(!bot2.getRightCard().isAlive()) {
             backgroundImage = new BackgroundImage(bot2.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot2RightCardButton.setBackground(new Background(backgroundImage));
+        }
+        else{
+            backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
             bot2RightCardButton.setBackground(new Background(backgroundImage));
         }
@@ -373,9 +432,19 @@ public class GamePageController extends BasicPageController{
                     null, null, null, backgroundSize);
             bot3LeftCardButton.setBackground(new Background(backgroundImage));
         }
+        else{
+            backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+            bot3LeftCardButton.setBackground(new Background(backgroundImage));
+        }
 
         if(!bot3.getRightCard().isAlive()) {
             backgroundImage = new BackgroundImage(bot3.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot3RightCardButton.setBackground(new Background(backgroundImage));
+        }
+        else{
+            backgroundImage = new BackgroundImage(Card.getBackImage(),
                     null, null, null, backgroundSize);
             bot3RightCardButton.setBackground(new Background(backgroundImage));
         }
@@ -518,7 +587,7 @@ public class GamePageController extends BasicPageController{
 
             }
             else if(selectedButton == swapOneButton){
-                result = backend.swapOne(player, false);
+                result = backend.swapOne(player, swapLeft);
 
             }
             else if(selectedButton == ambassadorExchangeButton){

@@ -287,13 +287,18 @@ public class GameLogicCenter {
         return "";
     }
 
-    public String swapOne(Player player, boolean exchangeLeftCard){
+    public String swapOne(Player player, Boolean exchangeLeftCard){
         if(player == null){
             return "doer is null";
         }
+        if(exchangeLeftCard == null){
+            return "exchangeLeftCard is null";
+        }
+
         if(!player.isAlive())return "doer is dead";
         
         if(player.getCoins() < 1)return "not enough coins";
+
 
         if(mustCoup(player))return "must coup";
         

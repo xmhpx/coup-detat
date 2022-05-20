@@ -11,6 +11,7 @@ public class Card {
     protected String description;
     protected boolean isAlive;
     protected int cardNumber;
+    public static final String backImagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\Back.jpeg";
 
 
     public Card(String name, String description, boolean isAlive, int cardNumber){
@@ -25,6 +26,9 @@ public class Card {
         return null;
     }
 
+    public static Image getBackImage(){
+        return new Image(backImagePath);
+    }
 
     // getters and setters
 
