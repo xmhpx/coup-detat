@@ -1,7 +1,6 @@
 package logic;
 
-import modules.Move;
-import modules.Player;
+import modules.*;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -42,10 +41,10 @@ public class GameLogicCenter {
         cards = new Card[15];
         isDrawable = new boolean[15];
 
-        players[0] = new Player("YOU", null, null, startingCoins);
-        for(int i = 1; i < 4; i++){
-            players[i] = new Player("bot"+i, null, null, startingCoins);
-        }
+        players[0] = new Player("PLAYER", null, null, startingCoins, DoerType.PLAYER);
+        players[1] = new Player("BOT1", null, null, startingCoins, DoerType.BOT1);
+        players[2] = new Player("BOT2", null, null, startingCoins, DoerType.BOT2);
+        players[3] = new Player("BOT3", null, null, startingCoins, DoerType.BOT3);
 
 
         Arrays.fill(isDrawable, true);
@@ -90,6 +89,11 @@ public class GameLogicCenter {
         return player.getCoins() >= 10;
     }
 
+    public void addMove(DoerType doerType, MoveTarget moveTarget, MoveType moveType){
+        Move move = new Move(doerType, moveTarget, moveType);
+        moves.add(move);
+    }
+
 
     //TODO buggy if exchanges cards with his own cards
 
@@ -120,6 +124,7 @@ public class GameLogicCenter {
             player.setRightCard(cards[drawnCardNumber]);
         }
 
+        addMove(player.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
         return "";
     }
 
@@ -148,6 +153,8 @@ public class GameLogicCenter {
 
         player.setLeftCard(cards[cardNumber1]);
         player.setRightCard(cards[cardNumber2]);
+
+        addMove(player.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
         return "";
     }
 
@@ -179,6 +186,7 @@ public class GameLogicCenter {
         if(attackLeftCard) victim.getLeftCard().setAlive(false);
         else victim.getRightCard().setAlive(false);
 
+        addMove(assassin.getType(), MoveTarget.valueOf(""+victim.getType()), MoveType.ASSASSINATE);
         return "";
     }
 
@@ -200,6 +208,8 @@ public class GameLogicCenter {
 
         captain.setCoins(captain.getCoins()+numberOfStolenCoins);
         victim.setCoins(victim.getCoins()-numberOfStolenCoins);
+
+        addMove(captain.getType(), MoveTarget.valueOf(""+victim.getType()), MoveType.STEAL);
         return "";
     }
 
@@ -214,6 +224,8 @@ public class GameLogicCenter {
         if(mustCoup(player))return "must coup";
 
         player.setCoins(player.getCoins()+2);
+
+        addMove(player.getType(), MoveTarget.CENTER, MoveType.FOREIGN_AID);
         return "";
     }
 
@@ -226,6 +238,8 @@ public class GameLogicCenter {
         if(mustCoup(player))return "must coup";
 
         player.setCoins(player.getCoins()+3);
+
+        addMove(player.getType(), MoveTarget.CENTER, MoveType.TAKE_FROM_TREASURY);
         return "";
     }
 
@@ -240,6 +254,8 @@ public class GameLogicCenter {
         if(mustCoup(player))return "must coup";
 
         player.setCoins(player.getCoins()+1);
+
+        addMove(player.getType(), MoveTarget.CENTER, MoveType.INCOME);
         return "";
     }
 
@@ -267,6 +283,7 @@ public class GameLogicCenter {
         if(attackLeftCard) victim.getLeftCard().setAlive(false);
         else victim.getRightCard().setAlive(false);
 
+        addMove(coup.getType(), MoveTarget.valueOf(""+victim.getType()), MoveType.COUP);
         return "";
     }
 
@@ -296,6 +313,8 @@ public class GameLogicCenter {
         }
 
         player.setCoins(player.getCoins()-1);
+
+        addMove(player.getType(), MoveTarget.CENTER, MoveType.SWAP_ONE);
         return "";
     }
 
@@ -350,8 +369,15 @@ public class GameLogicCenter {
 
 
     public void play(){
+        int aliveCount = 0;
         for(int i = 1; i < 4; i++){
-            income(players[i]);
+            if(players[i].isAlive()) {
+                aliveCount++;
+                if (income(players[i]).length() > 0) log.error("bot" + i + "'s move is invalid");
+            }
+        }
+        if(aliveCount == 0){
+            return;
         }
     }
 

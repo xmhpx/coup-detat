@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 /* TODO:
     add bots
-    add fx ids and button actions
     add settings json
     add home page
     finish game page

@@ -12,13 +12,15 @@ public class Player {
     protected Card leftCard;
     protected Card rightCard;
     protected int coins;
+    protected DoerType type = null;
 
 
-    public Player(String name, Card leftCard, Card rightCard, int coins){
+    public Player(String name, Card leftCard, Card rightCard, int coins, DoerType type){
         this.name = name;
         this.leftCard = leftCard;
         this.rightCard = rightCard;
         this.coins = coins;
+        this.type = type;
     }
 
 
@@ -66,5 +68,14 @@ public class Player {
 
     public boolean isAlive(){
         return leftCard.isAlive() || rightCard.isAlive();
+    }
+
+
+    public DoerType getType() {
+        return type;
+    }
+
+    public void setType(DoerType type) {
+        this.type = type;
     }
 }

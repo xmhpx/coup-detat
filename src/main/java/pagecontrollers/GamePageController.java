@@ -112,7 +112,9 @@ public class GamePageController extends BasicPageController{
     public void initialize(){
         super.initialize();
         selectedButton = null;
-        tableView.getItems().clear();
+        var data = tableView.getItems();
+        data.clear();
+        data.addAll(GameLogicCenter.getInstance().getMoves());
         refresh();
     }
 
@@ -306,6 +308,9 @@ public class GamePageController extends BasicPageController{
             cardActionInfoLabel.setText("don't challenge");
         }
         massageLabel.setText("");
+        var data = tableView.getItems();
+        data.clear();
+        data.addAll(GameLogicCenter.getInstance().getMoves());
         loadCoinsAndCards();
     }
 
