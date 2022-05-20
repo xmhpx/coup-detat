@@ -526,7 +526,7 @@ public class GamePageController extends BasicPageController{
 
             }
             else if(selectedButton == assassinateButton){
-                result = backend.coup(player, getTargetedPlayer(), false);
+                result = backend.assassinate(player, getTargetedPlayer(), false);
 
             }
             else if(selectedButton == takeFromTreasuryButton){

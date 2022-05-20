@@ -1,10 +1,12 @@
 package logic;
 
+import modules.Move;
 import modules.Player;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -29,19 +31,22 @@ public class GameLogicCenter {
 
     protected Player[] players;
     protected Card[] cards;
+    protected ArrayList<Move> moves;
 
-    boolean[] isDrawable;
+    protected boolean[] isDrawable;
 
 
     private GameLogicCenter(){
         players = new Player[4];
+        moves = new ArrayList<>();
+        cards = new Card[15];
+        isDrawable = new boolean[15];
+
         players[0] = new Player("YOU", null, null, startingCoins);
         for(int i = 1; i < 4; i++){
             players[i] = new Player("bot"+i, null, null, startingCoins);
         }
 
-        cards = new Card[15];
-        isDrawable = new boolean[15];
 
         Arrays.fill(isDrawable, true);
 
@@ -81,6 +86,11 @@ public class GameLogicCenter {
     }
 
 
+    public boolean mustCoup(Player player){
+        return player.getCoins() >= 10;
+    }
+
+
     //TODO buggy if exchanges cards with his own cards
 
     public String ambassadorExchangeOne(Player player, int drawnCardNumber, boolean exchangeLeftCard){
@@ -88,6 +98,8 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+
+        if(mustCoup(player))return "must coup";
 
         if(!isDrawable[drawnCardNumber]){
             return "targeted card("+drawnCardNumber+") is not drawable";
@@ -116,6 +128,8 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+
+        if(mustCoup(player))return "must coup";
 
         if(!isDrawable[cardNumber1]){
             return "targeted card("+cardNumber1+") is not drawable";
@@ -149,6 +163,8 @@ public class GameLogicCenter {
         if(!assassin.isAlive())return "assassin is dead";
         if(!victim.isAlive())return "victim is dead";
 
+        if(mustCoup(assassin))return "must coup";
+
         if(assassin.getCoins() < 3) return "not enough coins";
 
         if(attackLeftCard) {
@@ -178,6 +194,8 @@ public class GameLogicCenter {
         if(!captain.isAlive())return "doer is dead";
         if(!victim.isAlive())return "victim is dead";
 
+        if(mustCoup(captain))return "must coup";
+
         int numberOfStolenCoins = Math.min(victim.getCoins(), 2);
 
         captain.setCoins(captain.getCoins()+numberOfStolenCoins);
@@ -188,14 +206,24 @@ public class GameLogicCenter {
 
 
     public String foreignAid(Player player){
+        if(player == null){
+            return "player is null";
+        }
         if(!player.isAlive())return "doer is dead";
+
+        if(mustCoup(player))return "must coup";
 
         player.setCoins(player.getCoins()+2);
         return "";
     }
 
     public String takeFromTreasury(Player player){
+        if(player == null){
+            return "player is null";
+        }
         if(!player.isAlive())return "doer is dead";
+
+        if(mustCoup(player))return "must coup";
 
         player.setCoins(player.getCoins()+3);
         return "";
@@ -204,14 +232,24 @@ public class GameLogicCenter {
 
 
     public String income(Player player){
+        if(player == null){
+            return "player is null";
+        }
         if(!player.isAlive())return "doer is dead";
+
+        if(mustCoup(player))return "must coup";
 
         player.setCoins(player.getCoins()+1);
         return "";
     }
 
     public String coup(Player coup, Player victim, boolean attackLeftCard){
-        if(victim == null) return "select a victim";
+        if(coup == null){
+            return "doer is null";
+        }
+        if(victim == null){
+            return "victim is null";
+        }
         if(!coup.isAlive()) return "doer is dead";
         if(!victim.isAlive()) return "victim is dead";
 
@@ -233,9 +271,14 @@ public class GameLogicCenter {
     }
 
     public String swapOne(Player player, boolean exchangeLeftCard){
+        if(player == null){
+            return "doer is null";
+        }
         if(!player.isAlive())return "doer is dead";
         
         if(player.getCoins() < 1)return "not enough coins";
+
+        if(mustCoup(player))return "must coup";
         
         int drawnCardNumber = getOneDrawableRandomCard().getCardNumber();
 
@@ -310,5 +353,43 @@ public class GameLogicCenter {
         for(int i = 1; i < 4; i++){
             income(players[i]);
         }
+    }
+
+
+    // getters and setters
+
+    public ArrayList<Move> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(ArrayList<Move> moves) {
+        this.moves = moves;
+    }
+
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
+
+    public Card[] getCards() {
+        return cards;
+    }
+
+    public void setCards(Card[] cards) {
+        this.cards = cards;
+    }
+
+
+    public boolean[] getIsDrawable() {
+        return isDrawable;
+    }
+
+    public void setIsDrawable(boolean[] isDrawable) {
+        this.isDrawable = isDrawable;
     }
 }
