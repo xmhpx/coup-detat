@@ -1,5 +1,6 @@
 package modules.cardtypes;
 
+import javafx.scene.image.Image;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -19,6 +20,10 @@ public class Card {
         this.cardNumber = cardNumber;
     }
 
+
+    public Image getImage(){
+        return null;
+    }
 
 
     // getters and setters

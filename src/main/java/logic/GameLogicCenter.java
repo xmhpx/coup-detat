@@ -24,7 +24,7 @@ public class GameLogicCenter {
     }
 
 
-    protected static int startingCoins;
+    protected static int startingCoins = 2;
 
 
     protected Player[] players;

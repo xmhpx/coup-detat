@@ -6,15 +6,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundSize;
 import logic.GameLogicCenter;
 import modules.ActionInfo;
 import modules.ActionName;
 import modules.Move;
+import modules.Player;
 import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import java.util.Map;
+import java.util.Objects;
 
 
 public class GamePageController extends BasicPageController{
@@ -102,13 +108,12 @@ public class GamePageController extends BasicPageController{
     private Button selectedButton;
 
 
-    Map<Button, String> buttonToActionName;
-
     @Override
     public void initialize(){
         super.initialize();
         selectedButton = null;
         tableView.getItems().clear();
+        refresh();
     }
 
 
@@ -128,6 +133,18 @@ public class GamePageController extends BasicPageController{
             selectedButton.setStyle("-fx-border-color:#ff0000");
         }
         refresh();
+    }
+
+
+    public String getTarget(){
+        String target = null;
+        if(targetTextField.getText().equals("1"))
+            target = "bot1";
+        if(targetTextField.getText().equals("2"))
+            target = "bot2";
+        if(targetTextField.getText().equals("3"))
+            target = "bot3";
+        return target;
     }
 
 
@@ -200,9 +217,13 @@ public class GamePageController extends BasicPageController{
 
             }
             else if(selectedButton == coupButton){
-                cardActionInfoLabel.setText(ActionInfo.coupInfo());
-                actionToBeConfirmedLabel.setText(ActionName.coup());
-
+                String target = getTarget();
+                if(target == null){
+                    massageLabel.setText("choose target to coup d'etat against");
+                    return;
+                }
+                cardActionInfoLabel.setText(ActionInfo.coupInfo()+"\ntarget:"+target);
+                actionToBeConfirmedLabel.setText(ActionName.coup()+"\ntarget:"+target);
             }
             else if(selectedButton == swapOneButton){
                 cardActionInfoLabel.setText(ActionInfo.swapOneInfo());
@@ -215,13 +236,23 @@ public class GamePageController extends BasicPageController{
 
             }
             else if(selectedButton == stealButton){
-                cardActionInfoLabel.setText(ActionInfo.stealInfo());
-                actionToBeConfirmedLabel.setText(ActionName.steal());
+                String target = getTarget();
+                if(target == null){
+                    massageLabel.setText("choose target to steal from");
+                    return;
+                }
+                cardActionInfoLabel.setText(ActionInfo.stealInfo()+"\ntarget:"+target);
+                actionToBeConfirmedLabel.setText(ActionName.steal()+"\ntarget:"+target);
 
             }
             else if(selectedButton == assassinateButton){
-                cardActionInfoLabel.setText(ActionInfo.assassinateInfo());
-                actionToBeConfirmedLabel.setText(ActionName.assassinate());
+                String target = getTarget();
+                if(target == null){
+                    massageLabel.setText("choose target to assassinate");
+                    return;
+                }
+                cardActionInfoLabel.setText(ActionInfo.assassinateInfo()+"\ntarget:"+target);
+                actionToBeConfirmedLabel.setText(ActionName.assassinate()+"\ntarget:"+target);
 
             }
             else if(selectedButton == takeFromTreasuryButton){
@@ -249,6 +280,88 @@ public class GamePageController extends BasicPageController{
             actionToBeConfirmedLabel.setText("Skip");
             cardActionInfoLabel.setText("don't challenge");
         }
+        massageLabel.setText("");
+        loadCoinsAndCards();
+    }
+
+
+
+    public void loadCoinsAndCards(){
+        loadCards();
+        loadCoins();
+    }
+
+    public void loadCards(){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+        Player player = backend.getPlayer(0);
+        Player bot1 = backend.getPlayer(1);
+        Player bot2 = backend.getPlayer(2);
+        Player bot3 = backend.getPlayer(3);
+
+        BackgroundImage backgroundImage;
+
+        BackgroundSize backgroundSize = new BackgroundSize(1, 1,
+                true, true,
+                false, false);
+        backgroundImage = new BackgroundImage(player.getLeftCard().getImage(),
+                null, null, null, backgroundSize);
+        playerLeftCardButton.setBackground(new Background(backgroundImage));
+
+        backgroundImage = new BackgroundImage(player.getRightCard().getImage(),
+                null, null, null, backgroundSize);
+        playerRightCardButton.setBackground(new Background(backgroundImage));
+
+
+        if(!bot1.getLeftCard().isAlive()) {
+            backgroundImage = new BackgroundImage(bot1.getLeftCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot1LeftCardButton.setBackground(new Background(backgroundImage));
+        }
+
+        if(!bot1.getRightCard().isAlive()) {
+            backgroundImage = new BackgroundImage(bot1.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot1RightCardButton.setBackground(new Background(backgroundImage));
+        }
+
+
+        if(!bot2.getLeftCard().isAlive()) {
+            backgroundImage = new BackgroundImage(bot2.getLeftCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot2LeftCardButton.setBackground(new Background(backgroundImage));
+        }
+
+        if(!bot2.getRightCard().isAlive()) {
+            backgroundImage = new BackgroundImage(bot2.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot2RightCardButton.setBackground(new Background(backgroundImage));
+        }
+
+
+        if(!bot3.getLeftCard().isAlive()) {
+            backgroundImage = new BackgroundImage(bot3.getLeftCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot3LeftCardButton.setBackground(new Background(backgroundImage));
+        }
+
+        if(!bot3.getRightCard().isAlive()) {
+            backgroundImage = new BackgroundImage(bot3.getRightCard().getImage(),
+                    null, null, null, backgroundSize);
+            bot3RightCardButton.setBackground(new Background(backgroundImage));
+        }
+    }
+
+    public void loadCoins(){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+        Player player = backend.getPlayer(0);
+        Player bot1 = backend.getPlayer(1);
+        Player bot2 = backend.getPlayer(2);
+        Player bot3 = backend.getPlayer(3);
+
+        playerCoinsLabel.setText(""+player.getCoins());
+        bot1CoinsLabel.setText(""+bot1.getCoins());
+        bot2CoinsLabel.setText(""+bot2.getCoins());
+        bot3CoinsLabel.setText(""+bot3.getCoins());
     }
 
 
@@ -354,6 +467,8 @@ public class GamePageController extends BasicPageController{
 
     @FXML
     void ConfirmButtonOnAction(ActionEvent actionEvent) {
+        if(selectedButton == null){
 
+        }
     }
 }

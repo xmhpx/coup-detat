@@ -1,6 +1,10 @@
 package modules;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class Move {
+    private static final Logger log = LogManager.getLogger(Move.class);
     private DoerType doer;
     private MoveTarget moveTarget;
     private MoveType moveType;
