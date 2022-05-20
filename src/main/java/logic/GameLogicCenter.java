@@ -83,41 +83,49 @@ public class GameLogicCenter {
 
     //TODO buggy if exchanges cards with his own cards
 
-    public boolean ambassadorExchangeOne(Player player, int drawnCardNumber, boolean exchangeLeftCard){
-        if(!player.isAlive())return false;
+    public String ambassadorExchangeOne(Player player, int drawnCardNumber, boolean exchangeLeftCard){
+        if(player == null){
+            return "player is null";
+        }
+        if(!player.isAlive())return "doer is dead";
 
-        if(!isDrawable[drawnCardNumber])return false;
+        if(!isDrawable[drawnCardNumber]){
+            return "targeted card("+drawnCardNumber+") is not drawable";
+        }
 
         if(exchangeLeftCard) {
-            if (!player.getLeftCard().isAlive()) return false;
+            if (!player.getLeftCard().isAlive()) return "targeted card(left) is not drawable";
             int exchangedCardNumber = player.getLeftCard().getCardNumber();
             isDrawable[exchangedCardNumber] = true;
             isDrawable[drawnCardNumber] = false;
             player.setLeftCard(cards[drawnCardNumber]);
         }
         else{
-            if (!player.getRightCard().isAlive()) return false;
+            if (!player.getRightCard().isAlive()) return "targeted card(right) is not drawable";
             int exchangedCardNumber = player.getRightCard().getCardNumber();
             isDrawable[exchangedCardNumber] = true;
             isDrawable[drawnCardNumber] = false;
             player.setRightCard(cards[drawnCardNumber]);
         }
 
-        return true;
+        return "";
     }
 
-    public boolean ambassadorExchangeTwo(Player player, int cardNumber1, int cardNumber2){
-        if(!player.isAlive())return false;
+    public String ambassadorExchangeTwo(Player player, int cardNumber1, int cardNumber2){
+        if(player == null){
+            return "player is null";
+        }
+        if(!player.isAlive())return "doer is dead";
 
         if(!isDrawable[cardNumber1]){
-            return false;
+            return "targeted card("+cardNumber1+") is not drawable";
         }
         if(!isDrawable[cardNumber2]){
-            return false;
+            return "targeted card("+cardNumber2+") is not drawable";
         }
 
-        if(!player.getLeftCard().isAlive())return false;
-        if(!player.getRightCard().isAlive())return false;
+        if(!player.getLeftCard().isAlive())return "targeted card(left) is not drawable";
+        if(!player.getRightCard().isAlive())return "targeted card(right) is not drawable";
 
         isDrawable[player.getLeftCard().getCardNumber()] = true;
         isDrawable[player.getRightCard().getCardNumber()] = true;
@@ -126,25 +134,28 @@ public class GameLogicCenter {
 
         player.setLeftCard(cards[cardNumber1]);
         player.setRightCard(cards[cardNumber2]);
-        return true;
+        return "";
     }
 
 
-    public boolean canAssassinate(Player assassin, Player victim){
-        if(!assassin.isAlive()) return false;
-        if(!victim.isAlive()) return false;
 
-        return assassin.getCoins() >= 3;
-    }
+    public String assassinate(Player assassin, Player victim, boolean attackLeftCard){
+        if(assassin == null){
+            return "assassin is null";
+        }
+        if(victim == null){
+            return "victim is null";
+        }
+        if(!assassin.isAlive())return "assassin is dead";
+        if(!victim.isAlive())return "victim is dead";
 
-    public boolean assassinate(Player assassin, Player victim, boolean attackLeftCard){
-        if(!canAssassinate(assassin, victim)) return false;
+        if(assassin.getCoins() < 3) return "not enough coins";
 
         if(attackLeftCard) {
-            if (!victim.getLeftCard().isAlive()) return false;
+            if (!victim.getLeftCard().isAlive()) return "targeted card(left) is dead";
         }
         else{
-            if (!victim.getRightCard().isAlive()) return false;
+            if (!victim.getRightCard().isAlive()) return "targeted card(right) is dead";
         }
 
         assassin.setCoins(assassin.getCoins() - 3);
@@ -152,61 +163,65 @@ public class GameLogicCenter {
         if(attackLeftCard) victim.getLeftCard().setAlive(false);
         else victim.getRightCard().setAlive(false);
 
-        return true;
+        return "";
     }
 
 
 
-    public boolean canSteal(Player captain, Player victim){
-        return captain.isAlive() && victim.isAlive();
-    }
-
-    public boolean steal(Player captain, Player victim){
-        canSteal(captain, victim);
+    public String steal(Player captain, Player victim){
+        if(captain == null){
+            return "captain is null";
+        }
+        if(victim == null){
+            return "victim is null";
+        }
+        if(!captain.isAlive())return "doer is dead";
+        if(!victim.isAlive())return "victim is dead";
 
         int numberOfStolenCoins = Math.min(victim.getCoins(), 2);
 
         captain.setCoins(captain.getCoins()+numberOfStolenCoins);
         victim.setCoins(victim.getCoins()-numberOfStolenCoins);
-        return true;
+        return "";
     }
 
 
 
-    public boolean foreignAid(Player player){
-        if(!player.isAlive())return false;
+    public String foreignAid(Player player){
+        if(!player.isAlive())return "doer is dead";
 
         player.setCoins(player.getCoins()+2);
-        return true;
+        return "";
     }
 
-    public boolean takeFromTreasury(Player player){
-        if(!player.isAlive())return false;
+    public String takeFromTreasury(Player player){
+        if(!player.isAlive())return "doer is dead";
 
         player.setCoins(player.getCoins()+3);
-        return true;
+        return "";
     }
 
 
 
-    public boolean income(Player player){
-        if(!player.isAlive())return false;
+    public String income(Player player){
+        if(!player.isAlive())return "doer is dead";
 
         player.setCoins(player.getCoins()+1);
-        return true;
+        return "";
     }
 
-    public boolean coup(Player coup, Player victim, boolean attackLeftCard){
-        if(!coup.isAlive()) return false;
-        if(!victim.isAlive()) return false;
+    public String coup(Player coup, Player victim, boolean attackLeftCard){
+        if(victim == null) return "select a victim";
+        if(!coup.isAlive()) return "doer is dead";
+        if(!victim.isAlive()) return "victim is dead";
 
-        if(coup.getCoins() < 7) return false;
+        if(coup.getCoins() < 7) return "not enough coins";
 
         if(attackLeftCard) {
-            if (!victim.getLeftCard().isAlive()) return false;
+            if (!victim.getLeftCard().isAlive()) return "targeted card(left) is dead";
         }
         else{
-            if (!victim.getRightCard().isAlive()) return false;
+            if (!victim.getRightCard().isAlive()) return "targeted card(right) is dead";
         }
 
         coup.setCoins(coup.getCoins() - 7);
@@ -214,65 +229,86 @@ public class GameLogicCenter {
         if(attackLeftCard) victim.getLeftCard().setAlive(false);
         else victim.getRightCard().setAlive(false);
 
-        return true;
+        return "";
     }
 
-    public boolean exchange(Player player, boolean exchangeLeftCard){
-        if(!player.isAlive())return false;
+    public String swapOne(Player player, boolean exchangeLeftCard){
+        if(!player.isAlive())return "doer is dead";
         
-        if(player.getCoins() < 1)return false;
+        if(player.getCoins() < 1)return "not enough coins";
         
         int drawnCardNumber = getOneDrawableRandomCard().getCardNumber();
 
         if(exchangeLeftCard) {
-            if (!player.getLeftCard().isAlive()) return false;
+            if (!player.getLeftCard().isAlive()) return "targeted card(left) is dead";
             isDrawable[player.getLeftCard().getCardNumber()] = true;
             isDrawable[drawnCardNumber] = false;
             player.setLeftCard(cards[drawnCardNumber]);
         }
         else{
-            if (!player.getRightCard().isAlive()) return false;
+            if (!player.getRightCard().isAlive()) return "targeted card(right) is dead";
             isDrawable[player.getRightCard().getCardNumber()] = true;
             isDrawable[drawnCardNumber] = false;
             player.setRightCard(cards[drawnCardNumber]);
         }
 
         player.setCoins(player.getCoins()-1);
-        return true;
+        return "";
     }
 
 
+
+    public int getOneDrawableRandomCardNumber(){
+        Random random = new Random();
+        int cardNumber = random.nextInt(15);
+        while(!isDrawable[cardNumber]){
+            cardNumber = random.nextInt(15);
+        }
+        return cardNumber;
+    }
 
     public Card getOneDrawableRandomCard(){
-        Random random = new Random();
-        int cardNumber = random.nextInt(15);
-        while(!isDrawable[cardNumber]){
-            cardNumber = random.nextInt(15);
-        }
-        return cards[cardNumber];
+        return cards[getOneDrawableRandomCardNumber()];
     }
 
-    public Card[] getTwoDrawableRandomCard(){
+
+    public int[] getTwoDrawableRandomCardNumber(){
         Random random = new Random();
 
-        int cardNumber = random.nextInt(15);
+        int[] cardNumbers = new int[2];
+        cardNumbers[0] = random.nextInt(15);
+        cardNumbers[1] = random.nextInt(15);
+
+        while(!isDrawable[cardNumbers[0]]){
+            cardNumbers[0] = random.nextInt(15);
+        }
+        while((!isDrawable[cardNumbers[1]]) || cardNumbers[0] == cardNumbers[1]){
+            cardNumbers[1] = random.nextInt(15);
+        }
+
+        return cardNumbers;
+    }
+
+
+    public Card[] getTwoDrawableRandomCard(){
+        int[] cardNumber = getTwoDrawableRandomCardNumber();
 
         Card[] result = new Card[2];
-        while(!isDrawable[cardNumber]){
-            cardNumber = random.nextInt(15);
-        }
-        result[0] = cards[cardNumber];
 
-        int cardNumber1 = random.nextInt(15);
-        while(!isDrawable[cardNumber1] || cardNumber1 == cardNumber){
-            cardNumber1 = random.nextInt(15);
-        }
-        result[1] = cards[cardNumber1];
+        result[0] = cards[cardNumber[0]];
+        result[1] = cards[cardNumber[1]];
         return result;
     }
 
 
-    public Player getPlayer(int num){
-        return players[num];
+    public Player getPlayer(int playerNumber){
+        return players[playerNumber];
+    }
+
+
+    public void play(){
+        for(int i = 1; i < 4; i++){
+            income(players[i]);
+        }
     }
 }

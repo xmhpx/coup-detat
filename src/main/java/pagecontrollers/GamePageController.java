@@ -148,6 +148,31 @@ public class GamePageController extends BasicPageController{
     }
 
 
+    public Player getTargetedPlayer(){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+
+        String target = getTarget();
+        if(target == null)return null;
+        if(target.equals("player")){
+            return backend.getPlayer(0);
+
+        }
+        else if(target.equals("bot1")){
+            return backend.getPlayer(1);
+
+        }
+        else if(target.equals("bot2")){
+            return backend.getPlayer(2);
+
+        }
+        else if(target.equals("bot3")){
+            return backend.getPlayer(3);
+
+        }
+        else return null;
+    }
+
+
     public void refresh(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
 
@@ -467,8 +492,73 @@ public class GamePageController extends BasicPageController{
 
     @FXML
     void ConfirmButtonOnAction(ActionEvent actionEvent) {
-        if(selectedButton == null){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+        Player player = backend.getPlayer(0);
 
+        if(selectedButton == null){
+            backend.play();
         }
+        else{
+            String result;
+            if(selectedButton == incomeButton){
+                result = backend.income(player);
+
+            }
+            else if(selectedButton == foreignAidButton){
+                result = backend.foreignAid(player);
+
+            }
+            else if(selectedButton == coupButton){
+                result = backend.coup(player, getTargetedPlayer(), false);
+
+            }
+            else if(selectedButton == swapOneButton){
+                result = backend.swapOne(player, false);
+
+            }
+            else if(selectedButton == ambassadorExchangeButton){
+                int[] cards = backend.getTwoDrawableRandomCardNumber();
+                result = backend.ambassadorExchangeTwo(player, cards[0], cards[1]);
+
+            }
+            else if(selectedButton == stealButton){
+                result = backend.steal(player, getTargetedPlayer());
+
+            }
+            else if(selectedButton == assassinateButton){
+                result = backend.coup(player, getTargetedPlayer(), false);
+
+            }
+            else if(selectedButton == takeFromTreasuryButton){
+                result = backend.takeFromTreasury(player);
+
+            }
+            else if(selectedButton == interveneButton){
+                // TODO
+                result = backend.takeFromTreasury(player);
+
+            }
+            else if(selectedButton == challengeButton){
+                // TODO
+                result = backend.takeFromTreasury(player);
+
+            }
+            else{
+                massageLabel.setText("invalid action");
+                return;
+            }
+            if(result.length() == 0) {
+                backend.play();
+            }
+            else{
+                massageLabel.setText(result);
+                return;
+            }
+        }
+
+        if(selectedButton != null) {
+            pressButton(selectedButton);
+        }
+        refresh();
     }
 }

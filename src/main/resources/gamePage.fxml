@@ -31,9 +31,9 @@
       <Button fx:id="bot3RightCardButton" layoutX="700.0" layoutY="200.0" mnemonicParsing="false" onAction="#bot3RightCardButtonOnAction" prefHeight="100.0" prefWidth="70.0" />
 
 
-      <Label fx:id="playerCoinsLabel" layoutX="390.0" layoutY="346.0" text="Player Coins" />
-      <Label fx:id="bot1CoinsLabel" layoutX="190.0" layoutY="242.0" text="Bot1 Coins" />
-      <Label fx:id="bot2CoinsLabel" layoutX="390.0" layoutY="135.0" text="Bot2 Coins" />
+      <Label fx:id="playerCoinsLabel" layoutX="390.0" layoutY="348.0" text="Player Coins" />
+      <Label fx:id="bot1CoinsLabel" layoutX="188.0" layoutY="242.0" text="Bot1 Coins" />
+      <Label fx:id="bot2CoinsLabel" layoutX="390.0" layoutY="133.0" text="Bot2 Coins" />
       <Label fx:id="bot3CoinsLabel" layoutX="604.0" layoutY="241.0" text="Bot3 Coins" />
 
 
@@ -93,14 +93,14 @@
       </GridPane>
 
 
-      <Label fx:id="cardActionInfoLabel" alignment="TOP_LEFT" layoutX="173.0" layoutY="332.0" prefWidth="136.0" text="Card/Action Info" wrapText="true" />
+      <Label fx:id="cardActionInfoLabel" alignment="TOP_LEFT" layoutX="174.0" layoutY="332.0" prefWidth="136.0" text="Card/Action Info" wrapText="true" />
 
 
       <Label fx:id="massageLabel" alignment="TOP_LEFT" layoutX="599.0" layoutY="323.0" prefHeight="34.0" prefWidth="170.0" text="Massage" wrapText="true" />
       <Label fx:id="actionToBeConfirmedLabel" layoutX="600.0" layoutY="385.0" prefHeight="18.0" prefWidth="180.0" text="Action To Be Confirmed" textAlignment="CENTER" />
-      <Label layoutX="84.0" layoutY="324.0" text="Notes" />
+      <Label layoutX="73.0" layoutY="324.0" text="Notes" />
       <TextArea layoutX="13.0" layoutY="353.0" prefHeight="130.0" prefWidth="150.0" />
-      <ImageView fitHeight="174.0" fitWidth="268.0" layoutX="523.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="174.0" fitWidth="289.0" layoutX="523.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@Images/Manual.jpeg" />
          </image>
