@@ -270,4 +270,9 @@ public class GameLogicCenter {
         result[1] = cards[cardNumber1];
         return result;
     }
+
+
+    public Player getPlayer(int num){
+        return players[num];
+    }
 }

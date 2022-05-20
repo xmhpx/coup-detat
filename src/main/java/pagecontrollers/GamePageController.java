@@ -6,8 +6,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import logic.GameLogicCenter;
+import modules.ActionInfo;
+import modules.ActionName;
+import modules.Move;
+import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+
+import java.util.Map;
 
 
 public class GamePageController extends BasicPageController{
@@ -48,139 +55,305 @@ public class GamePageController extends BasicPageController{
 
 
     @FXML
-    Button IncomeButton;
+    Button incomeButton;
     @FXML
-    Button ForeignAidButton;
+    Button foreignAidButton;
     @FXML
-    Button CoupButton;
+    Button coupButton;
     @FXML
-    Button SwapOneButton;
+    Button swapOneButton;
 
     @FXML
-    Button AmbassadorExchangeButton;
+    Button ambassadorExchangeButton;
     @FXML
-    Button StealButton;
+    Button stealButton;
     @FXML
-    Button AssassinateButton;
+    Button assassinateButton;
     @FXML
-    Button TakeFromTreasuryButton;
+    Button takeFromTreasuryButton;
 
     @FXML
-    TextField TargetTextField;
-
-
-    @FXML
-    Button InterveneButton;
-    @FXML
-    Button ChallengeButton;
+    TextField targetTextField;
 
 
     @FXML
-    Button ConfirmButton;
-
+    Button interveneButton;
     @FXML
-    Label MassageLabel;
-
-
-//    @FXML
-//    TableView<Move> tableView;
+    Button challengeButton;
 
 
     @FXML
-    Label CardActionInfoLabel;
-    @FXML
-    Label ActionToBeConfirmedLabel;
+    Button confirmButton;
 
+    @FXML
+    Label massageLabel;
+
+
+    @FXML
+    TableView<Move> tableView;
+
+
+    @FXML
+    Label cardActionInfoLabel;
+    @FXML
+    Label actionToBeConfirmedLabel;
+
+
+    private Button selectedButton;
+
+
+    Map<Button, String> buttonToActionName;
 
     @Override
     public void initialize(){
         super.initialize();
+        selectedButton = null;
+        tableView.getItems().clear();
+    }
+
+
+    public void pressButton(Button button){
+        if(selectedButton != null){
+            selectedButton.setStyle("");
+        }
+
+        if(selectedButton == button){
+            selectedButton = null;
+        }
+        else {
+            selectedButton = button;
+        }
+
+        if(selectedButton != null){
+            selectedButton.setStyle("-fx-border-color:#ff0000");
+        }
+        refresh();
+    }
+
+
+    public void refresh(){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+
+        actionToBeConfirmedLabel.setText("");
+        cardActionInfoLabel.setText("");
+        if(selectedButton != null){
+            if(selectedButton == playerLeftCardButton){
+                Card card = backend.getPlayer(0).getLeftCard();
+                cardActionInfoLabel.setText(card.getDescription());
+
+            }
+            else if(selectedButton == playerRightCardButton){
+                Card card = backend.getPlayer(0).getRightCard();
+                cardActionInfoLabel.setText(card.getDescription());
+
+            }
+            else if(selectedButton == bot1LeftCardButton){
+                Card card = backend.getPlayer(1).getLeftCard();
+                if(!card.isAlive()) {
+                    cardActionInfoLabel.setText(card.getDescription());
+                }
+
+            }
+            else if(selectedButton == bot1RightCardButton){
+                Card card = backend.getPlayer(1).getRightCard();
+                if(!card.isAlive()) {
+                    cardActionInfoLabel.setText(card.getDescription());
+                }
+
+            }
+            else if(selectedButton == bot2LeftCardButton){
+                Card card = backend.getPlayer(2).getLeftCard();
+                if(!card.isAlive()) {
+                    cardActionInfoLabel.setText(card.getDescription());
+                }
+
+            }
+            else if(selectedButton == bot2RightCardButton){
+                Card card = backend.getPlayer(2).getRightCard();
+                if(!card.isAlive()) {
+                    cardActionInfoLabel.setText(card.getDescription());
+                }
+
+            }
+            else if(selectedButton == bot3LeftCardButton){
+                Card card = backend.getPlayer(3).getLeftCard();
+                if(!card.isAlive()) {
+                    cardActionInfoLabel.setText(card.getDescription());
+                }
+
+            }
+            else if(selectedButton == bot3RightCardButton){
+                Card card = backend.getPlayer(3).getRightCard();
+                if(!card.isAlive()) {
+                    cardActionInfoLabel.setText(card.getDescription());
+                }
+
+            }
+            else if(selectedButton == incomeButton){
+                cardActionInfoLabel.setText(ActionInfo.incomeInfo());
+                actionToBeConfirmedLabel.setText(ActionName.income());
+
+            }
+            else if(selectedButton == foreignAidButton){
+                cardActionInfoLabel.setText(ActionInfo.foreignAidInfo());
+                actionToBeConfirmedLabel.setText(ActionName.foreignAid());
+
+            }
+            else if(selectedButton == coupButton){
+                cardActionInfoLabel.setText(ActionInfo.coupInfo());
+                actionToBeConfirmedLabel.setText(ActionName.coup());
+
+            }
+            else if(selectedButton == swapOneButton){
+                cardActionInfoLabel.setText(ActionInfo.swapOneInfo());
+                actionToBeConfirmedLabel.setText(ActionName.swapOne());
+
+            }
+            else if(selectedButton == ambassadorExchangeButton){
+                cardActionInfoLabel.setText(ActionInfo.ambassadorExchangeInfo());
+                actionToBeConfirmedLabel.setText(ActionName.ambassadorExchange());
+
+            }
+            else if(selectedButton == stealButton){
+                cardActionInfoLabel.setText(ActionInfo.stealInfo());
+                actionToBeConfirmedLabel.setText(ActionName.steal());
+
+            }
+            else if(selectedButton == assassinateButton){
+                cardActionInfoLabel.setText(ActionInfo.assassinateInfo());
+                actionToBeConfirmedLabel.setText(ActionName.assassinate());
+
+            }
+            else if(selectedButton == takeFromTreasuryButton){
+                cardActionInfoLabel.setText(ActionInfo.takeFromTreasuryInfo());
+                actionToBeConfirmedLabel.setText(ActionName.takeFromTreasury());
+
+            }
+            else if(selectedButton == interveneButton){
+                cardActionInfoLabel.setText(ActionInfo.interveneInfo());
+                actionToBeConfirmedLabel.setText(ActionName.intervene());
+
+            }
+            else if(selectedButton == challengeButton){
+                cardActionInfoLabel.setText(ActionInfo.challengeInfo());
+                actionToBeConfirmedLabel.setText(ActionName.challenge());
+
+            }
+            else{
+                cardActionInfoLabel.setText("Selected action/card not found");
+                actionToBeConfirmedLabel.setText("Selected action not found");
+
+            }
+        }
+        else{
+            actionToBeConfirmedLabel.setText("Skip");
+            cardActionInfoLabel.setText("don't challenge");
+        }
     }
 
 
 
     @FXML
     void playerLeftCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(playerLeftCardButton);
     }
 
     @FXML
     void playerRightCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(playerRightCardButton);
     }
 
 
     @FXML
     void bot1LeftCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(bot1LeftCardButton);
     }
 
     @FXML
     void bot1RightCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(bot1RightCardButton);
     }
 
 
     @FXML
     void bot2LeftCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(bot2LeftCardButton);
     }
 
     @FXML
     void bot2RightCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(bot2RightCardButton);
     }
 
 
     @FXML
     void bot3LeftCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(bot3LeftCardButton);
     }
 
     @FXML
     void bot3RightCardButtonOnAction(ActionEvent actionEvent) {
+        pressButton(bot3RightCardButton);
     }
 
 
 
     @FXML
     void IncomeButtonOnAction(ActionEvent actionEvent) {
+        pressButton(incomeButton);
     }
 
     @FXML
     void ForeignAidButtonOnAction(ActionEvent actionEvent) {
+        pressButton(foreignAidButton);
     }
 
     @FXML
     void CoupButtonOnAction(ActionEvent actionEvent) {
+        pressButton(coupButton);
     }
 
     @FXML
     void SwapOneButtonOnAction(ActionEvent actionEvent) {
+        pressButton(swapOneButton);
     }
 
 
     @FXML
     void AmbassadorExchangeButtonOnAction(ActionEvent actionEvent) {
+        pressButton(ambassadorExchangeButton);
     }
 
     @FXML
     void StealButtonOnAction(ActionEvent actionEvent) {
+        pressButton(stealButton);
     }
 
     @FXML
     void AssassinateButtonOnAction(ActionEvent actionEvent) {
+        pressButton(assassinateButton);
     }
 
     @FXML
     void TakeFromTreasuryButtonOnAction(ActionEvent actionEvent) {
+        pressButton(takeFromTreasuryButton);
     }
 
 
 
     @FXML
     void InterveneButtonOnAction(ActionEvent actionEvent) {
+        pressButton(interveneButton);
     }
 
     @FXML
     void ChallengeButtonOnAction(ActionEvent actionEvent) {
+        pressButton(challengeButton);
     }
 
 
     @FXML
     void ConfirmButtonOnAction(ActionEvent actionEvent) {
+
     }
 }
