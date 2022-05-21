@@ -19,6 +19,11 @@ public class Move {
     }
 
 
+    @Override
+    public String toString(){
+        return doer+" "+moveTarget+" "+moveType;
+    }
+
     // getters and setters
 
     public DoerType getDoer() {

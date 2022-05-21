@@ -1,6 +1,7 @@
 package logic;
 
 import modules.*;
+import modules.bots.Coupper;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -42,9 +43,9 @@ public class GameLogicCenter {
         isDrawable = new boolean[15];
 
         players[0] = new Player("PLAYER", null, null, startingCoins, DoerType.PLAYER);
-        players[1] = new Player("BOT1", null, null, startingCoins, DoerType.BOT1);
-        players[2] = new Player("BOT2", null, null, startingCoins, DoerType.BOT2);
-        players[3] = new Player("BOT3", null, null, startingCoins, DoerType.BOT3);
+        players[1] = new Coupper("BOT1", null, null, startingCoins, DoerType.BOT1);
+        players[2] = new Coupper("BOT2", null, null, startingCoins, DoerType.BOT2);
+        players[3] = new Coupper("BOT3", null, null, startingCoins, DoerType.BOT3);
 
 
         Arrays.fill(isDrawable, true);
@@ -401,29 +402,52 @@ public class GameLogicCenter {
 
 
     public void play(){
-        while(!players[whoToPlay].isAlive()){
-            whoToPlay++;
-            if(whoToPlay >= 4)whoToPlay -= 4;
-        }
+        whoToPlay = getWhoToPlay();
+
         if(whoToPlay == 0){
             whoToPlay++;
             return;
         }
 
         Player player = players[whoToPlay];
-        if (assassinate(player, players[0], false).length() > 0){
-            if(assassinate(player, players[0], true).length() > 0){
-                if(coup(player, players[0], false).length() > 0) {
-                    if (coup(player, players[0], true).length() > 0) {
-                        if (income(player).length() > 0) {
-                            log.error("bot" + whoToPlay + "'s move is invalid");
-                        }
-                    }
-                }
+        Move move = player.getMove();
+
+        if(move.getMoveType() == MoveType.COUP) {
+            Player victim = null;
+
+            if (move.getMoveTarget() == MoveTarget.PLAYER) {
+                victim = getPlayer(0);
+            }
+
+            if (move.getMoveTarget() == MoveTarget.BOT1) {
+                victim = getPlayer(1);
+            }
+
+            if (move.getMoveTarget() == MoveTarget.BOT2) {
+                victim = getPlayer(2);
+            }
+
+            if (move.getMoveTarget() == MoveTarget.BOT3) {
+                victim = getPlayer(3);
+            }
+
+            String result = coup(player, victim, false);
+            if(result.length() > 0)result = coup(player, victim, true);
+            if(result.length() > 0){
+                log.error("bot's move is invalid" + move);
+                return;
             }
         }
+        if(move.getMoveType() == MoveType.TAKE_FROM_TREASURY) {
+            String result = takeFromTreasury(player);
+            if(result.length() > 0){
+                log.error("bot's move is invalid" + move);
+                return;
+            }
+        }
+
         whoToPlay++;
-        if(whoToPlay >= 4)whoToPlay -= 4;
+        whoToPlay = getWhoToPlay();
     }
 
 
@@ -466,6 +490,11 @@ public class GameLogicCenter {
 
 
     public int getWhoToPlay(){
+        if(whoToPlay >= 4)whoToPlay -= 4;
+        while(!players[whoToPlay].isAlive()){
+            whoToPlay++;
+            if(whoToPlay >= 4)whoToPlay -= 4;
+        }
         return whoToPlay;
     }
 }

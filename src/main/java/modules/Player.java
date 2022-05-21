@@ -25,7 +25,7 @@ public class Player {
 
 
 
-
+    public Move getMove(){return null;}
 
 
     // getters and setters
