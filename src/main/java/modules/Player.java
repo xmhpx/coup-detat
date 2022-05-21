@@ -27,6 +27,27 @@ public class Player {
 
     public Move getMove(){return null;}
 
+    public boolean doesChallenge(Move move){
+        return false;
+    }
+
+    public boolean doesIntervene(Move move){
+        return false;
+    }
+
+    public boolean killsLeftCard(Move move){
+        return leftCard.isAlive();
+    }
+
+    public boolean showsLeftCardWhenChallenged(Move move){
+        return leftCard.isAlive();
+    }
+
+
+    public MoveTarget getMoveTarget(){
+        return MoveTarget.valueOf(""+getType());
+    }
+
 
     // getters and setters
 

@@ -1,1 +1,5 @@
-2022-05-21 12:59:53:187 INFO [GuiMain.start()] - application started
+2022-05-21 15:36:14:177 INFO [GuiMain.start()] - application started
+2022-05-21 15:37:34:444 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
+2022-05-21 15:37:34:811 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
+2022-05-21 15:37:35:055 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
+2022-05-21 15:37:35:212 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY

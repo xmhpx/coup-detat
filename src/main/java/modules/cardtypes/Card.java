@@ -1,6 +1,7 @@
 package modules.cardtypes;
 
 import javafx.scene.image.Image;
+import modules.MoveTarget;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -33,6 +34,11 @@ public class Card {
 
     public static Image getBackImage(){
         return new Image(backImagePath);
+    }
+
+
+    public MoveTarget getMoveTarget(){
+        return MoveTarget.valueOf(getName().toUpperCase());
     }
 
     // getters and setters

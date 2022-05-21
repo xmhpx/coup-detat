@@ -26,4 +26,25 @@ public class Coupper extends Player {
         }
         return new Move(this.getType(), MoveTarget.CENTER, MoveType.TAKE_FROM_TREASURY);
     }
+
+
+    @Override
+    public boolean doesChallenge(Move move){
+        return false;
+    }
+
+    @Override
+    public boolean doesIntervene(Move move){
+        return false;
+    }
+
+    @Override
+    public boolean killsLeftCard(Move move){
+        return leftCard.isAlive();
+    }
+
+    @Override
+    public boolean showsLeftCardWhenChallenged(Move move){
+        return leftCard.isAlive();
+    }
 }

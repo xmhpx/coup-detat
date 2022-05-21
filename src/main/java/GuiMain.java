@@ -11,6 +11,10 @@ import org.apache.log4j.Logger;
     add settings json
     add home page
     finish game page
+    if assassination gets intervened successfully, money won't come back
+    if someone looses a challenge, they will refund the money they spent for the challenged action
+
+
  */
 
 
