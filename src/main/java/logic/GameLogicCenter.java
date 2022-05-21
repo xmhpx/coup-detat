@@ -25,7 +25,7 @@ public class GameLogicCenter {
     }
 
 
-    protected static int startingCoins = 2;
+    protected static final int startingCoins = 2;
 
 
     protected Player[] players;
@@ -33,7 +33,7 @@ public class GameLogicCenter {
     protected ArrayList<Move> moves;
 
     protected boolean[] isDrawable;
-
+    protected int whoToPlay = 0;
 
     private GameLogicCenter(){
         players = new Player[4];
@@ -102,6 +102,9 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+        if(player != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(player))return "must coup";
 
@@ -133,6 +136,9 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+        if(player != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(player))return "must coup";
 
@@ -169,6 +175,9 @@ public class GameLogicCenter {
         }
         if(!assassin.isAlive())return "assassin is dead";
         if(!victim.isAlive())return "victim is dead";
+        if(assassin != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(assassin))return "must coup";
 
@@ -201,6 +210,9 @@ public class GameLogicCenter {
         }
         if(!captain.isAlive())return "doer is dead";
         if(!victim.isAlive())return "victim is dead";
+        if(captain != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(captain))return "must coup";
 
@@ -220,6 +232,9 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+        if(player != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(player))return "must coup";
 
@@ -234,6 +249,9 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+        if(player != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(player))return "must coup";
 
@@ -250,6 +268,9 @@ public class GameLogicCenter {
             return "player is null";
         }
         if(!player.isAlive())return "doer is dead";
+        if(player != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(mustCoup(player))return "must coup";
 
@@ -268,6 +289,9 @@ public class GameLogicCenter {
         }
         if(!coup.isAlive()) return "doer is dead";
         if(!victim.isAlive()) return "victim is dead";
+        if(coup != players[whoToPlay]){
+            return "not your turn";
+        }
 
         if(coup.getCoins() < 7) return "not enough coins";
 
@@ -296,6 +320,9 @@ public class GameLogicCenter {
         }
 
         if(!player.isAlive())return "doer is dead";
+        if(player != players[whoToPlay]){
+            return "not your turn";
+        }
         
         if(player.getCoins() < 1)return "not enough coins";
 
@@ -374,16 +401,29 @@ public class GameLogicCenter {
 
 
     public void play(){
-        int aliveCount = 0;
-        for(int i = 1; i < 4; i++){
-            if(players[i].isAlive()) {
-                aliveCount++;
-                if (income(players[i]).length() > 0) log.error("bot" + i + "'s move is invalid");
-            }
+        while(!players[whoToPlay].isAlive()){
+            whoToPlay++;
+            if(whoToPlay >= 4)whoToPlay -= 4;
         }
-        if(aliveCount == 0){
+        if(whoToPlay == 0){
+            whoToPlay++;
             return;
         }
+
+        Player player = players[whoToPlay];
+        if (assassinate(player, players[0], false).length() > 0){
+            if(assassinate(player, players[0], true).length() > 0){
+                if(coup(player, players[0], false).length() > 0) {
+                    if (coup(player, players[0], true).length() > 0) {
+                        if (income(player).length() > 0) {
+                            log.error("bot" + whoToPlay + "'s move is invalid");
+                        }
+                    }
+                }
+            }
+        }
+        whoToPlay++;
+        if(whoToPlay >= 4)whoToPlay -= 4;
     }
 
 
@@ -422,5 +462,10 @@ public class GameLogicCenter {
 
     public void setIsDrawable(boolean[] isDrawable) {
         this.isDrawable = isDrawable;
+    }
+
+
+    public int getWhoToPlay(){
+        return whoToPlay;
     }
 }

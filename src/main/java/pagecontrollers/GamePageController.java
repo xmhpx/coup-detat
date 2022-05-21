@@ -575,9 +575,22 @@ public class GamePageController extends BasicPageController{
     void ConfirmButtonOnAction(ActionEvent actionEvent) {
         GameLogicCenter backend = GameLogicCenter.getInstance();
         Player player = backend.getPlayer(0);
+        if(!player.isAlive()){
+            massageLabel.setText("you are dead, wait");
+            backend.play();
+            refresh();
+            return;
+        }
 
         if(selectedButton == null){
-            backend.play();
+            if(backend.getWhoToPlay() == 0){
+                refresh();
+                massageLabel.setText("you can't skip your turn");
+                return;
+            }
+            else {
+                backend.play();
+            }
         }
         else{
             String result;
@@ -591,6 +604,9 @@ public class GamePageController extends BasicPageController{
             }
             else if(selectedButton == coupButton){
                 result = backend.coup(player, getTargetedPlayer(), false);
+                if(result.length() != 0){
+                    result = backend.coup(player, getTargetedPlayer(), true);
+                }
 
             }
             else if(selectedButton == swapOneButton){
@@ -608,6 +624,9 @@ public class GamePageController extends BasicPageController{
             }
             else if(selectedButton == assassinateButton){
                 result = backend.assassinate(player, getTargetedPlayer(), false);
+                if(result.length() != 0){
+                    result = backend.assassinate(player, getTargetedPlayer(), true);
+                }
 
             }
             else if(selectedButton == takeFromTreasuryButton){
@@ -626,12 +645,14 @@ public class GamePageController extends BasicPageController{
             }
             else{
                 massageLabel.setText("invalid action");
+                refresh();
                 return;
             }
             if(result.length() == 0) {
                 backend.play();
             }
             else{
+                refresh();
                 massageLabel.setText(result);
                 return;
             }
