@@ -3,8 +3,9 @@ package modules.bots;
 import logic.GameLogicCenter;
 import modules.*;
 import modules.cardtypes.Card;
+import modules.cardtypes.Duke;
 
-public class Coupper extends Player {
+public class Coupper extends DefaultPlayer {
 
     public Coupper(String name, Card leftCard, Card rightCard, int coins, DoerType type) {
         super(name, leftCard, rightCard, coins, type);
@@ -16,15 +17,15 @@ public class Coupper extends Player {
         GameLogicCenter backend = GameLogicCenter.getInstance();
         if(coins >= 7){
             for(int victimNumber = 3; victimNumber >= 0; victimNumber--){
-                Player victim = backend.getPlayer(victimNumber);
+                DefaultPlayer victim = backend.getPlayer(victimNumber);
                 if(victim.getType().equals(getType())){
                     continue;
                 }
                 if(!victim.isAlive())continue;
-                return new Move(this.getType(), MoveTarget.valueOf(""+victim.getType()), MoveType.COUP);
+                return Move.getCoupMove(this, victim);
             }
         }
-        return new Move(this.getType(), MoveTarget.CENTER, MoveType.TAKE_FROM_TREASURY);
+        return Move.getTakeFromTreasuryMove(this);
     }
 
 
@@ -39,12 +40,18 @@ public class Coupper extends Player {
     }
 
     @Override
-    public boolean killsLeftCard(Move move){
+    public boolean doesKillLeftCard(Move move){
+        if(leftCard.getName().equals(Duke.name)) {
+            return !rightCard.isAlive();
+        }
         return leftCard.isAlive();
     }
 
     @Override
-    public boolean showsLeftCardWhenChallenged(Move move){
-        return leftCard.isAlive();
+    public boolean doesShowLeftCardWhenChallenged(Move move){
+        if(leftCard.getName().equals(Duke.name)) {
+            return leftCard.isAlive();
+        }
+        return !rightCard.isAlive();
     }
 }

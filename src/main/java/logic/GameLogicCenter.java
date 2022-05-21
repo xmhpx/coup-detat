@@ -5,10 +5,14 @@ import modules.bots.Coupper;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import pagecontrollers.GamePageController;
+import pagecontrollers.PageControllerStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
+import static java.lang.Thread.sleep;
 
 //TODO if someone tries to assassinate but fails, they'll get their money back
 
@@ -17,8 +21,8 @@ public class GameLogicCenter {
 
     private static GameLogicCenter INSTANCE;
 
-    public static GameLogicCenter getInstance(){
-        if(INSTANCE == null){
+    public static GameLogicCenter getInstance() {
+        if (INSTANCE == null) {
             INSTANCE = new GameLogicCenter();
         }
         return INSTANCE;
@@ -28,7 +32,7 @@ public class GameLogicCenter {
     protected static final int startingCoins = 2;
 
 
-    protected Player[] players;
+    protected DefaultPlayer[] defaultPlayers;
     protected Card[] cards;
     protected ArrayList<Move> moves;
 
@@ -36,337 +40,349 @@ public class GameLogicCenter {
     protected int whoToPlay = 0;
 
 
-    /*
-    TODO challenge
-    az har player bepors aia challenge mikone ia intervene ia na
-
-    age kasi challenge kard:
-        be doer paiam befres ke che karti ru mikone
-        age kartesh dorost bud:
-            kartesho avaz kon
-            challenger ro begu ie kart ru kone
-            action esh ro edame bede (intervene ro bepors v baad ...)
-            (az baghie napors challenge mikonan ia na)
-        age doros nabud:
-            karti k ru kardero bokosh
-            action ro cancel kon
-    age kasi intervene kard:
-        az hame bepors aia challenge mikonan intervene ro ia na
-        age kasi challenge kard:
-            kasi k intervene karde ro begu kart ru kone
-            age doros bud kartesh:
-                kartesho avaz kon
-                be challenger begu ie kart ru kone
-                action ro intervene kon
-            age doros nabud:
-                karti ke ru karde ro bokosh
-                action edame peida kone
-        age na:
-            intervene kon action ro
-    age na:
-        edame bede action ro
-
-     baraie challenge v intervene player ham iek taabe besaz tu Player,
-     k ba komak UI beporse challenge/intervene mikone ia na
-     v ta vaghti javab nadade player, sabr kone
-     */
-
-
-
-    private GameLogicCenter(){
-        players = new Player[4];
+    private GameLogicCenter() {
+        defaultPlayers = new DefaultPlayer[4];
         moves = new ArrayList<>();
         cards = new Card[15];
         isDrawable = new boolean[15];
 
-        players[0] = new Player("PLAYER", null, null, startingCoins, DoerType.PLAYER);
-        players[1] = new Coupper("BOT1", null, null, startingCoins, DoerType.BOT1);
-        players[2] = new Coupper("BOT2", null, null, startingCoins, DoerType.BOT2);
-        players[3] = new Coupper("BOT3", null, null, startingCoins, DoerType.BOT3);
+        defaultPlayers[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
+        defaultPlayers[1] = new Coupper("BOT1", null, null, startingCoins, DoerType.BOT1);
+        defaultPlayers[2] = new Coupper("BOT2", null, null, startingCoins, DoerType.BOT2);
+        defaultPlayers[3] = new Coupper("BOT3", null, null, startingCoins, DoerType.BOT3);
 
 
         Arrays.fill(isDrawable, true);
 
-        for(int i = 0; i < 15; i++){
-            if(i < 3){
+        for (int i = 0; i < 15; i++) {
+            if (i < 3) {
                 cards[i] = new Ambassador(true, i);
-            }
-            else if(i < 6){
+            } else if (i < 6) {
                 cards[i] = new Assassin(true, i);
-            }
-            else if(i < 9){
+            } else if (i < 9) {
                 cards[i] = new Captain(true, i);
-            }
-            else if(i < 12){
+            } else if (i < 12) {
                 cards[i] = new Contessa(true, i);
-            }
-            else{
+            } else {
                 cards[i] = new Duke(true, i);
             }
         }
 
-        // TODO shuffle and ability to choose starting cards
+        // TODO ability to choose starting cards
 
-        for(int i = 0; i < 4; i++){
-            Card leftCard = cards[i*2];
-            Card rightCard = cards[i*2+1];
+        for (int i = 0; i < 4; i++) {
+            Card leftCard = getOneDrawableRandomCard();
+            isDrawable[leftCard.getCardNumber()] = false;
+            defaultPlayers[i].setLeftCard(leftCard);
 
-            players[i].setLeftCard(leftCard);
-            players[i].setRightCard(rightCard);
+            Card rightCard = getOneDrawableRandomCard();
+            isDrawable[rightCard.getCardNumber()] = false;
+            defaultPlayers[i].setRightCard(rightCard);
 
-            int leftCardNumber = leftCard.getCardNumber();
-            int rightCardNumber = rightCard.getCardNumber();
-
-            isDrawable[leftCardNumber] = false;
-            isDrawable[rightCardNumber] = false;
+            log.info("player(" + i + ") has " + leftCard.getName() + " and " + rightCard.getName());
         }
     }
 
 
-    public boolean mustCoup(Player player){
-        return player.getCoins() >= 10;
+    public boolean mustCoup(DefaultPlayer defaultPlayer) {
+        return defaultPlayer.getCoins() >= 10;
     }
 
-    public void addMove(DoerType doerType, MoveTarget moveTarget, MoveType moveType){
+    public void addMove(DoerType doerType, MoveTarget moveTarget, MoveType moveType) {
         Move move = new Move(doerType, moveTarget, moveType);
-        moves.add(move);
+        addMove(move);
     }
-    public void addMove(Move move){
+
+    public void addMove(Move move) {
         moves.add(move);
+        PageControllerStorage.getInstance().getGamePageController().loadCoinsAndCardsAndTable();
     }
 
 
     //TODO buggy if exchanges cards with his own cards
     //TODO ambassador exchange
 
-    public String ambassadorExchangeOne(Player player, int drawnCardNumber, boolean exchangeLeftCard){
-        if(player == null){
-            return "player is null";
+//    public String ambassadorExchangeOne(DefaultPlayer defaultPlayer, int drawnCardNumber, boolean exchangeLeftCard) {
+//        if (defaultPlayer == null) {
+//            return "defaultPlayer is null";
+//        }
+//        if (!defaultPlayer.isAlive()) return "doer is dead";
+//        if (defaultPlayer != defaultPlayers[whoToPlay]) {
+//            return "not your turn";
+//        }
+//
+//        if (mustCoup(defaultPlayer)) return "must coup";
+//
+//        if (!isDrawable[drawnCardNumber]) {
+//            return "targeted card(" + drawnCardNumber + ") is not drawable";
+//        }
+//
+//        if (exchangeLeftCard) {
+//            if (!defaultPlayer.getLeftCard().isAlive()) return "targeted card(left) is not drawable";
+//            int exchangedCardNumber = defaultPlayer.getLeftCard().getCardNumber();
+//            isDrawable[exchangedCardNumber] = true;
+//            isDrawable[drawnCardNumber] = false;
+//            defaultPlayer.setLeftCard(cards[drawnCardNumber]);
+//        } else {
+//            if (!defaultPlayer.getRightCard().isAlive()) return "targeted card(right) is not drawable";
+//            int exchangedCardNumber = defaultPlayer.getRightCard().getCardNumber();
+//            isDrawable[exchangedCardNumber] = true;
+//            isDrawable[drawnCardNumber] = false;
+//            defaultPlayer.setRightCard(cards[drawnCardNumber]);
+//        }
+//
+//        addMove(defaultPlayer.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
+//        return "";
+//    }
+
+
+    public String canAmbassadorExchangeTwo(DefaultPlayer defaultPlayer, int cardNumber1, int cardNumber2) {
+        if (defaultPlayer == null) {
+            return "defaultPlayer is null";
         }
-        if(!player.isAlive())return "doer is dead";
-        if(player != players[whoToPlay]){
+        if (!defaultPlayer.isAlive()) return "doer is dead";
+        if (defaultPlayer != defaultPlayers[whoToPlay]) {
             return "not your turn";
         }
 
-        if(mustCoup(player))return "must coup";
+        if (mustCoup(defaultPlayer)) return "must coup";
 
-        if(!isDrawable[drawnCardNumber]){
-            return "targeted card("+drawnCardNumber+") is not drawable";
+        if (!isDrawable[cardNumber1]) {
+            return "targeted card(" + cardNumber1 + ") is not drawable";
         }
-
-        if(exchangeLeftCard) {
-            if (!player.getLeftCard().isAlive()) return "targeted card(left) is not drawable";
-            int exchangedCardNumber = player.getLeftCard().getCardNumber();
-            isDrawable[exchangedCardNumber] = true;
-            isDrawable[drawnCardNumber] = false;
-            player.setLeftCard(cards[drawnCardNumber]);
+        if (!isDrawable[cardNumber2]) {
+            return "targeted card(" + cardNumber2 + ") is not drawable";
         }
-        else{
-            if (!player.getRightCard().isAlive()) return "targeted card(right) is not drawable";
-            int exchangedCardNumber = player.getRightCard().getCardNumber();
-            isDrawable[exchangedCardNumber] = true;
-            isDrawable[drawnCardNumber] = false;
-            player.setRightCard(cards[drawnCardNumber]);
-        }
-
-        addMove(player.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
         return "";
     }
 
-    public String ambassadorExchangeTwo(Player player, int cardNumber1, int cardNumber2){
-        if(player == null){
-            return "player is null";
-        }
-        if(!player.isAlive())return "doer is dead";
-        if(player != players[whoToPlay]){
-            return "not your turn";
-        }
+    public String ambassadorExchangeTwo(DefaultPlayer defaultPlayer, int cardNumber1, int cardNumber2) {
+        String result = canAmbassadorExchangeTwo(defaultPlayer, cardNumber1, cardNumber2);
+        if(result.length() > 0)return result;
 
-        if(mustCoup(player))return "must coup";
+        if (!defaultPlayer.getLeftCard().isAlive()) return "targeted card(left) is not drawable";
+        if (!defaultPlayer.getRightCard().isAlive()) return "targeted card(right) is not drawable";
 
-        if(!isDrawable[cardNumber1]){
-            return "targeted card("+cardNumber1+") is not drawable";
-        }
-        if(!isDrawable[cardNumber2]){
-            return "targeted card("+cardNumber2+") is not drawable";
-        }
-
-        if(!player.getLeftCard().isAlive())return "targeted card(left) is not drawable";
-        if(!player.getRightCard().isAlive())return "targeted card(right) is not drawable";
-
-        isDrawable[player.getLeftCard().getCardNumber()] = true;
-        isDrawable[player.getRightCard().getCardNumber()] = true;
+        isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
+        isDrawable[defaultPlayer.getRightCard().getCardNumber()] = true;
         isDrawable[cardNumber1] = false;
         isDrawable[cardNumber2] = false;
 
-        player.setLeftCard(cards[cardNumber1]);
-        player.setRightCard(cards[cardNumber2]);
+        defaultPlayer.setLeftCard(cards[cardNumber1]);
+        defaultPlayer.setRightCard(cards[cardNumber2]);
 
-        addMove(player.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
+        addMove(defaultPlayer.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
         return "";
     }
 
 
 
-    public String assassinate(Player assassin, Player victim, boolean attackLeftCard){
-        if(assassin == null){
+    public String canAssassinate(DefaultPlayer assassin, DefaultPlayer victim) {
+        if (assassin == null) {
             return "assassin is null";
         }
-        if(victim == null){
+        if (victim == null) {
             return "victim is null";
         }
-        if(!assassin.isAlive())return "assassin is dead";
-        if(!victim.isAlive())return "victim is dead";
-        if(assassin != players[whoToPlay]){
+        if (!assassin.isAlive()) return "assassin is dead";
+        if (!victim.isAlive()) return "victim is dead";
+        if (assassin != defaultPlayers[whoToPlay]) {
             return "not your turn";
         }
 
-        if(mustCoup(assassin))return "must coup";
+        if (mustCoup(assassin)) return "must coup";
 
-        if(assassin.getCoins() < 3) return "not enough coins";
+        if (assassin.getCoins() < 3) return "not enough coins";
+        return "";
+    }
 
-        if(attackLeftCard) {
-            if (!victim.getLeftCard().isAlive()) return "targeted card(left) is dead";
-        }
-        else{
-            if (!victim.getRightCard().isAlive()) return "targeted card(right) is dead";
-        }
+    public String assassinate(DefaultPlayer assassin, DefaultPlayer victim) {
+        String result = canAssassinate(assassin, victim);
+        if(result.length() > 0)return result;
 
         Move move = Move.getAssassinateMove(assassin, victim);
         addMove(move);
 
-        String[] correctCardNames = {Assassin.name};
-        if(!continueActionAfterChallenges(assassin, move, correctCardNames)){
-            return "";
-        }
 
-        assassin.setCoins(assassin.getCoins() - 3);
+        lock = true;
+        Thread thread = new Thread(()-> {
+            String[] correctCardNames = {Assassin.name};
+            if (!continueActionAfterChallenges(assassin, move, correctCardNames)) {
+                return;
+            }
 
-        String[] correctInterveneCardNames = {Contessa.name};
-        if(!continueActionAfterIntervene(assassin, victim, move, correctInterveneCardNames)){
-            return "";
-        }
+            assassin.setCoins(assassin.getCoins() - 3);
 
+            String[] correctInterveneCardNames = {Contessa.name};
+            if (!continueActionAfterIntervene(assassin, victim, move, correctInterveneCardNames)) {
+                return;
+            }
 
-        if(attackLeftCard) victim.getLeftCard().setAlive(false);
-        else victim.getRightCard().setAlive(false);
+            boolean killLeftCard = victim.doesKillLeftCard(move);
+            if (killLeftCard) {
+                if (!victim.getLeftCard().isAlive()) killLeftCard = false;
+            } else {
+                if (!victim.getRightCard().isAlive()) killLeftCard = true;
+            }
+            killCard(victim, killLeftCard);
+        });
+
+        thread.start();
 
         return "";
     }
 
 
-
-    public String steal(Player captain, Player victim){
-        if(captain == null){
+    public String canSteal(DefaultPlayer captain, DefaultPlayer victim) {
+        if (captain == null) {
             return "captain is null";
         }
-        if(victim == null){
+        if (victim == null) {
             return "victim is null";
         }
-        if(!captain.isAlive())return "doer is dead";
-        if(!victim.isAlive())return "victim is dead";
-        if(captain != players[whoToPlay]){
+        if (!captain.isAlive()) return "doer is dead";
+        if (!victim.isAlive()) return "victim is dead";
+        if (captain != defaultPlayers[whoToPlay]) {
             return "not your turn";
         }
 
-        if(mustCoup(captain))return "must coup";
+        if (mustCoup(captain)) return "must coup";
+        return "";
+    }
+
+    public String steal(DefaultPlayer captain, DefaultPlayer victim){
+        String result = canSteal(captain, victim);
+        if(result.length() > 0)return result;
 
         Move move = Move.getStealMove(captain, victim);
         addMove(move);
 
-        String[] correctCardNames = {Captain.name};
-        if(!continueActionAfterChallenges(captain, move, correctCardNames)){
-            return "";
-        }
+        lock = true;
+        Thread thread = new Thread(()-> {
+            String[] correctCardNames = {Captain.name};
+            if(!continueActionAfterChallenges(captain, move, correctCardNames)){
+                return;
+            }
 
 
-        String[] correctInterveneCardNames = {Captain.name, Ambassador.name};
-        if(!continueActionAfterIntervene(captain, victim, move, correctInterveneCardNames)){
-            return "";
-        }
+            String[] correctInterveneCardNames = {Captain.name, Ambassador.name};
+            if(!continueActionAfterIntervene(captain, victim, move, correctInterveneCardNames)){
+                return;
+            }
 
-        int numberOfStolenCoins = Math.min(victim.getCoins(), 2);
+            int numberOfStolenCoins = Math.min(victim.getCoins(), 2);
 
-        captain.setCoins(captain.getCoins()+numberOfStolenCoins);
-        victim.setCoins(victim.getCoins()-numberOfStolenCoins);
+            captain.setCoins(captain.getCoins()+numberOfStolenCoins);
+            victim.setCoins(victim.getCoins()-numberOfStolenCoins);
 
-        addMove(captain.getType(), MoveTarget.valueOf(""+victim.getType()), MoveType.STEAL);
+        });
+
+        thread.start();
         return "";
     }
 
 
 
-    public String foreignAid(Player player){
-        if(player == null){
-            return "player is null";
+    public String canForeignAid(DefaultPlayer defaultPlayer) {
+        if (defaultPlayer == null) {
+            return "defaultPlayer is null";
         }
-        if(!player.isAlive())return "doer is dead";
-        if(player != players[whoToPlay]){
+        if (!defaultPlayer.isAlive()) return "doer is dead";
+        if (defaultPlayer != defaultPlayers[whoToPlay]) {
             return "not your turn";
         }
 
-        if(mustCoup(player))return "must coup";
-
-        Move move = Move.getForeignAidMove(player);
-
-        String[] correctInterveneCardNames = {Duke.name};
-        if (!continueActionAfterInterveneAll(player, move, correctInterveneCardNames)) {
-            return "";
-        }
-
-        player.setCoins(player.getCoins()+2);
-
-        addMove(move);
+        if (mustCoup(defaultPlayer)) return "must coup";
         return "";
     }
 
-    public String takeFromTreasury(Player duke){
+    public String foreignAid(DefaultPlayer defaultPlayer) {
+        String result = canForeignAid(defaultPlayer);
+        if(result.length() > 0)return result;
+
+        Move move = Move.getForeignAidMove(defaultPlayer);
+        addMove(move);
+
+        lock = true;
+        Thread thread = new Thread(()-> {
+            String[] correctInterveneCardNames = {Duke.name};
+            if (!continueActionAfterInterveneAll(defaultPlayer, move, correctInterveneCardNames)) {
+                return;
+            }
+
+            defaultPlayer.setCoins(defaultPlayer.getCoins() + 2);
+        });
+
+        thread.start();
+        return "";
+    }
+
+
+
+    public String canTakeFromTreasury(DefaultPlayer duke) {
         if(duke == null){
             return "duke is null";
         }
         if(!duke.isAlive())return "doer is dead";
-        if(duke != players[whoToPlay]){
+        if(duke != defaultPlayers[whoToPlay]){
             return "not your turn";
         }
 
         if(mustCoup(duke))return "must coup";
 
+        return "";
+    }
+
+    public String takeFromTreasury(DefaultPlayer duke){
+        String result = canTakeFromTreasury(duke);
+        if(result.length() > 0)return result;
 
         Move move = Move.getTakeFromTreasuryMove(duke);
         addMove(move);
 
-        String[] correctCardNames = {Duke.name};
-        if(!continueActionAfterChallenges(duke, move, correctCardNames)){
-            return "";
-        }
+        lock = true;
+        Thread thread = new Thread(()-> {
+            String[] correctCardNames = {Duke.name};
+            if(!continueActionAfterChallenges(duke, move, correctCardNames)){
+                return;
+            }
 
 
-        duke.setCoins(duke.getCoins()+3);
+            duke.setCoins(duke.getCoins()+3);
+        });
 
-        addMove(move);
+        thread.start();
         return "";
     }
 
 
 
-    public String income(Player player){
-        if(player == null){
-            return "player is null";
+    public String canIncome(DefaultPlayer defaultPlayer){
+        if(defaultPlayer == null){
+            return "defaultPlayer is null";
         }
-        if(!player.isAlive())return "doer is dead";
-        if(player != players[whoToPlay]){
+        if(!defaultPlayer.isAlive())return "doer is dead";
+        if(defaultPlayer != defaultPlayers[whoToPlay]){
             return "not your turn";
         }
 
-        if(mustCoup(player))return "must coup";
-
-        player.setCoins(player.getCoins()+1);
-
-        addMove(player.getType(), MoveTarget.CENTER, MoveType.INCOME);
+        if(mustCoup(defaultPlayer))return "must coup";
         return "";
     }
 
-    public String coup(Player coup, Player victim, boolean attackLeftCard){
+    public String income(DefaultPlayer defaultPlayer){
+        String result = canIncome(defaultPlayer);
+        if(result.length() > 0)return result;
+
+        defaultPlayer.setCoins(defaultPlayer.getCoins()+1);
+
+        addMove(defaultPlayer.getType(), MoveTarget.CENTER, MoveType.INCOME);
+        return "";
+    }
+
+
+
+    public String canCoup(DefaultPlayer coup, DefaultPlayer victim){
         if(coup == null){
             return "doer is null";
         }
@@ -375,66 +391,87 @@ public class GameLogicCenter {
         }
         if(!coup.isAlive()) return "doer is dead";
         if(!victim.isAlive()) return "victim is dead";
-        if(coup != players[whoToPlay]){
+        if(coup != defaultPlayers[whoToPlay]){
             return "not your turn";
         }
 
         if(coup.getCoins() < 7) return "not enough coins";
 
-        if(attackLeftCard) {
-            if (!victim.getLeftCard().isAlive()) return "targeted card(left) is dead";
+        return "";
+    }
+
+    public String coup(DefaultPlayer coup, DefaultPlayer victim){
+        String result = canCoup(coup, victim);
+        if(result.length() > 0)return result;
+
+        Move move = Move.getCoupMove(coup, victim);
+
+        boolean killLeftCard = victim.doesKillLeftCard(move);
+        if(killLeftCard) {
+            if (!victim.getLeftCard().isAlive()) killLeftCard = false;
         }
         else{
-            if (!victim.getRightCard().isAlive()) return "targeted card(right) is dead";
+            if (!victim.getRightCard().isAlive()) killLeftCard = true;
         }
 
         coup.setCoins(coup.getCoins() - 7);
 
-        if(attackLeftCard) victim.getLeftCard().setAlive(false);
+        if(killLeftCard) victim.getLeftCard().setAlive(false);
         else victim.getRightCard().setAlive(false);
 
-        addMove(coup.getType(), MoveTarget.valueOf(""+victim.getType()), MoveType.COUP);
+        addMove(move);
         return "";
     }
 
-    public String swapOne(Player player, Boolean exchangeLeftCard){
-        if(player == null){
+
+
+    public String canSwapOne(DefaultPlayer defaultPlayer, Boolean exchangeLeftCard) {
+        if (defaultPlayer == null) {
             return "doer is null";
         }
-        if(exchangeLeftCard == null){
+        if (exchangeLeftCard == null) {
             return "exchangeLeftCard is null";
         }
 
-        if(!player.isAlive())return "doer is dead";
-        if(player != players[whoToPlay]){
+        if (!defaultPlayer.isAlive()) return "doer is dead";
+        if (defaultPlayer != defaultPlayers[whoToPlay]) {
             return "not your turn";
         }
-        
-        if(player.getCoins() < 1)return "not enough coins";
 
+        if (defaultPlayer.getCoins() < 1) return "not enough coins";
 
-        if(mustCoup(player))return "must coup";
+        if (mustCoup(defaultPlayer)) return "must coup";
+
+        return "";
+    }
+
+    public String swapOne(DefaultPlayer defaultPlayer, Boolean exchangeLeftCard){
+        String result = canSwapOne(defaultPlayer, exchangeLeftCard);
+        if(result.length() > 0)return result;
         
         int drawnCardNumber = getOneDrawableRandomCard().getCardNumber();
 
         if(exchangeLeftCard) {
-            if (!player.getLeftCard().isAlive()) return "targeted card(left) is dead";
-            isDrawable[player.getLeftCard().getCardNumber()] = true;
+            if (!defaultPlayer.getLeftCard().isAlive()) return "targeted card(left) is dead";
+            isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
             isDrawable[drawnCardNumber] = false;
-            player.setLeftCard(cards[drawnCardNumber]);
+            defaultPlayer.setLeftCard(cards[drawnCardNumber]);
         }
         else{
-            if (!player.getRightCard().isAlive()) return "targeted card(right) is dead";
-            isDrawable[player.getRightCard().getCardNumber()] = true;
+            if (!defaultPlayer.getRightCard().isAlive()) return "targeted card(right) is dead";
+            isDrawable[defaultPlayer.getRightCard().getCardNumber()] = true;
             isDrawable[drawnCardNumber] = false;
-            player.setRightCard(cards[drawnCardNumber]);
+            defaultPlayer.setRightCard(cards[drawnCardNumber]);
         }
 
-        player.setCoins(player.getCoins()-1);
+        defaultPlayer.setCoins(defaultPlayer.getCoins()-1);
 
-        addMove(player.getType(), MoveTarget.CENTER, MoveType.SWAP_ONE);
+        addMove(defaultPlayer.getType(), MoveTarget.CENTER, MoveType.SWAP_ONE);
         return "";
     }
+
+
+
 
 
 
@@ -450,7 +487,6 @@ public class GameLogicCenter {
     public Card getOneDrawableRandomCard(){
         return cards[getOneDrawableRandomCardNumber()];
     }
-
 
     public int[] getTwoDrawableRandomCardNumber(){
         Random random = new Random();
@@ -469,7 +505,6 @@ public class GameLogicCenter {
         return cardNumbers;
     }
 
-
     public Card[] getTwoDrawableRandomCard(){
         int[] cardNumber = getTwoDrawableRandomCardNumber();
 
@@ -480,76 +515,89 @@ public class GameLogicCenter {
         return result;
     }
 
-    public void changeCard(Player player, boolean changeLeft){
-        if(player == null){
-            log.error("player is null");
+
+
+    public void changeCard(DefaultPlayer defaultPlayer, boolean changeLeft){
+        if(defaultPlayer == null){
+            log.error("defaultPlayer is null");
             return;
         }
         if(changeLeft) {
-            if (!player.getLeftCard().isAlive()) {
+            if (!defaultPlayer.getLeftCard().isAlive()) {
                 log.error("can't change a dead card");
             }
-            isDrawable[player.getLeftCard().getCardNumber()] = true;
+            isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
             Card newCard = getOneDrawableRandomCard();
             isDrawable[newCard.getCardNumber()] = false;
-            player.setLeftCard(newCard);
+            defaultPlayer.setLeftCard(newCard);
 
         }
         else{
-            if (!player.getRightCard().isAlive()) {
+            if (!defaultPlayer.getRightCard().isAlive()) {
                 log.error("can't change a dead card");
             }
-            isDrawable[player.getRightCard().getCardNumber()] = true;
+            isDrawable[defaultPlayer.getRightCard().getCardNumber()] = true;
             Card newCard = getOneDrawableRandomCard();
             isDrawable[newCard.getCardNumber()] = false;
-            player.setRightCard(newCard);
+            defaultPlayer.setRightCard(newCard);
 
         }
     }
 
-    public void killCardAndAddMove(Player player, boolean killLeft){
-        killCard(player, killLeft);
+    public void killCardAndAddMove(DefaultPlayer defaultPlayer, boolean killLeft){
+        killCard(defaultPlayer, killLeft);
 
         Card shownCard;
         if(killLeft){
-            shownCard = player.getLeftCard();
+            shownCard = defaultPlayer.getLeftCard();
         }
         else{
-            shownCard = player.getRightCard();
+            shownCard = defaultPlayer.getRightCard();
         }
 
-        Move showCardMove = Move.getShowCardMove(player, shownCard);
+        Move showCardMove = Move.getShowCardMove(defaultPlayer, shownCard);
         addMove(showCardMove);
     }
 
-    public void killCard(Player player, boolean killLeft){
-        if(player == null){
-            log.error("player is null");
+    public void killCard(DefaultPlayer defaultPlayer, boolean killLeft){
+        if(defaultPlayer == null){
+            log.error("defaultPlayer is null");
             return;
         }
 
         if(killLeft) {
-            if (!player.getLeftCard().isAlive()) {
+            if (!defaultPlayer.getLeftCard().isAlive()) {
                 log.error("can't kill a dead card");
             }
-            player.getLeftCard().setAlive(false);
+            defaultPlayer.getLeftCard().setAlive(false);
 
         }
         else{
-            if (!player.getRightCard().isAlive()) {
+            if (!defaultPlayer.getRightCard().isAlive()) {
                 log.error("can't kill a dead card");
             }
-            player.getRightCard().setAlive(false);
+            defaultPlayer.getRightCard().setAlive(false);
 
         }
 
     }
 
 
-    public boolean continueActionAfterChallenges(Player doer, Move move, String[] correctCardNames){
+
+    public boolean continueActionAfterChallenges(DefaultPlayer doer, Move move, String[] correctCardNames){
         for(int i = 3; i >= 0; i--){
-            Player challenger = getPlayer(i);
+            DefaultPlayer challenger = getPlayer(i);
             if(challenger != doer && challenger.isAlive()){
+                if(i == 0){
+                    ((UIPlayer) challenger).decideChallenge(move);
+                    while(!((UIPlayer) challenger).isDecided()){
+                        try {
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                }
                 if(challenger.doesChallenge(move)){
                     Move challengeMove = Move.getChallengeMove(doer, challenger);
 
@@ -557,7 +605,7 @@ public class GameLogicCenter {
 
                     Card shownCard;
                     boolean shownLeft;
-                    if(doer.showsLeftCardWhenChallenged(move)){
+                    if(doer.doesShowLeftCardWhenChallenged(move)){
                         shownCard = doer.getLeftCard();
                         shownLeft = true;
                     }
@@ -568,7 +616,7 @@ public class GameLogicCenter {
 
                     if(Arrays.asList(correctCardNames).contains(shownCard.getName())) {
                         changeCard(doer, shownLeft);
-                        killCardAndAddMove(challenger, challenger.killsLeftCard(challengeMove));
+                        killCardAndAddMove(challenger, challenger.doesKillLeftCard(challengeMove));
                     }
                     else{
                         killCardAndAddMove(doer, shownLeft);
@@ -581,7 +629,17 @@ public class GameLogicCenter {
         return true;
     }
 
-    public boolean continueActionAfterIntervene(Player doer, Player intervener, Move move, String[] correctInterveneCardNames){
+    public boolean continueActionAfterIntervene(DefaultPlayer doer, DefaultPlayer intervener, Move move, String[] correctInterveneCardNames){
+        if(intervener.getType() == DoerType.PLAYER){
+            ((UIPlayer) intervener).decideIntervene(move);
+            while(!((UIPlayer) intervener).isDecided()){
+                try {
+                    sleep(100);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
         if(intervener.doesIntervene(move)){
             Move interveneMove = Move.getInterveneMove(doer, intervener);
 
@@ -592,10 +650,20 @@ public class GameLogicCenter {
         return true;
     }
 
-    public boolean continueActionAfterInterveneAll(Player doer, Move move, String[] correctInterveneCardNames){
+    public boolean continueActionAfterInterveneAll(DefaultPlayer doer, Move move, String[] correctInterveneCardNames){
         for(int i = 3; i >= 0; i--) {
-            Player intervener = getPlayer(i);
+            DefaultPlayer intervener = getPlayer(i);
             if (intervener != doer && intervener.isAlive()) {
+                if(i == 0){
+                    ((UIPlayer) intervener).decideIntervene(move);
+                    while(!((UIPlayer) intervener).isDecided()){
+                        try {
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                }
                 if (intervener.doesIntervene(move)) {
                     Move interveneMove = Move.getInterveneMove(doer, intervener);
 
@@ -612,62 +680,130 @@ public class GameLogicCenter {
 
 
 
-
-
-
-    public Player getPlayer(int playerNumber){
-        return players[playerNumber];
-    }
-
+    protected boolean lock = false;
 
     public void play(){
         whoToPlay = getWhoToPlay();
 
-        if(whoToPlay == 0){
-            whoToPlay++;
+        DefaultPlayer doer = defaultPlayers[whoToPlay];
+        Move move = doer.getMove();
+
+        if (!takeAction(doer, move)) {
             return;
-        }
-
-        Player player = players[whoToPlay];
-        Move move = player.getMove();
-
-        if(move.getMoveType() == MoveType.COUP) {
-            Player victim = null;
-
-            if (move.getMoveTarget() == MoveTarget.PLAYER) {
-                victim = getPlayer(0);
-            }
-
-            if (move.getMoveTarget() == MoveTarget.BOT1) {
-                victim = getPlayer(1);
-            }
-
-            if (move.getMoveTarget() == MoveTarget.BOT2) {
-                victim = getPlayer(2);
-            }
-
-            if (move.getMoveTarget() == MoveTarget.BOT3) {
-                victim = getPlayer(3);
-            }
-
-            String result = coup(player, victim, false);
-            if(result.length() > 0)result = coup(player, victim, true);
-            if(result.length() > 0){
-                log.error("bot's move is invalid" + move);
-                return;
-            }
-        }
-        if(move.getMoveType() == MoveType.TAKE_FROM_TREASURY) {
-            String result = takeFromTreasury(player);
-            if(result.length() > 0){
-                log.error("bot's move is invalid" + move);
-                return;
-            }
         }
 
         whoToPlay++;
         whoToPlay = getWhoToPlay();
+        lock = false;
     }
+
+
+
+    //TODO let player choose which card to show
+
+    private boolean takeAction(DefaultPlayer doer, Move move) {
+        if(move.getMoveType() == MoveType.COUP) {
+            DefaultPlayer victim = getPlayerFromMoveTarget(move.getMoveTarget());
+
+            String result = coup(doer, victim);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.TAKE_FROM_TREASURY) {
+            String result = takeFromTreasury(doer);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.INCOME) {
+            String result = income(doer);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.FOREIGN_AID) {
+            String result = foreignAid(doer);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.SWAP_ONE) {
+            boolean swapLeft = doer.getLeftCard().isAlive() && doer.getLeftCard().getMoveTarget() == move.getMoveTarget();
+            String result = swapOne(doer, swapLeft);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.ASSASSINATE) {
+            DefaultPlayer victim = getPlayerFromMoveTarget(move.getMoveTarget());
+
+            String result = assassinate(doer, victim);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.STEAL) {
+            DefaultPlayer victim = getPlayerFromMoveTarget(move.getMoveTarget());
+
+            String result = steal(doer, victim);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+
+        return false;
+    }
+
+
+
+    private DefaultPlayer getPlayerFromMoveTarget(MoveTarget moveTarget) {
+        DefaultPlayer victim = getPlayer(0);
+
+        if (moveTarget == MoveTarget.PLAYER) {
+            victim = getPlayer(0);
+        }
+
+        if (moveTarget == MoveTarget.BOT1) {
+            victim = getPlayer(1);
+        }
+
+        if (moveTarget == MoveTarget.BOT2) {
+            victim = getPlayer(2);
+        }
+
+        if (moveTarget == MoveTarget.BOT3) {
+            victim = getPlayer(3);
+        }
+
+        return victim;
+    }
+
+    public DefaultPlayer getPlayer(int playerNumber){
+        return defaultPlayers[playerNumber];
+    }
+
 
 
     // getters and setters
@@ -676,17 +812,13 @@ public class GameLogicCenter {
         return moves;
     }
 
-    public void setMoves(ArrayList<Move> moves) {
-        this.moves = moves;
+
+    public DefaultPlayer[] getPlayers() {
+        return defaultPlayers;
     }
 
-
-    public Player[] getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Player[] players) {
-        this.players = players;
+    public void setPlayers(DefaultPlayer[] defaultPlayers) {
+        this.defaultPlayers = defaultPlayers;
     }
 
 
@@ -710,10 +842,15 @@ public class GameLogicCenter {
 
     public int getWhoToPlay(){
         if(whoToPlay >= 4)whoToPlay -= 4;
-        while(!players[whoToPlay].isAlive()){
+        while(!defaultPlayers[whoToPlay].isAlive()){
             whoToPlay++;
             if(whoToPlay >= 4)whoToPlay -= 4;
         }
         return whoToPlay;
+    }
+
+
+    public boolean getLock(){
+        return lock;
     }
 }

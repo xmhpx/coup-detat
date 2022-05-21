@@ -6,21 +6,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundSize;
 import logic.GameLogicCenter;
 import modules.ActionInfo;
 import modules.ActionName;
+import modules.DefaultPlayer;
 import modules.Move;
-import modules.Player;
+import modules.UIPlayer;
 import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.util.Map;
-import java.util.Objects;
+import static java.lang.Thread.sleep;
 
 
 public class GamePageController extends BasicPageController{
@@ -87,11 +86,6 @@ public class GamePageController extends BasicPageController{
     TextField leftOrRightTextField;
 
 
-    @FXML
-    Button interveneButton;
-    @FXML
-    Button challengeButton;
-
 
     @FXML
     Button confirmButton;
@@ -116,11 +110,14 @@ public class GamePageController extends BasicPageController{
     @Override
     public void initialize(){
         super.initialize();
+
         selectedButton = null;
         var data = tableView.getItems();
         data.clear();
         data.addAll(GameLogicCenter.getInstance().getMoves());
         refresh();
+
+        PageControllerStorage.getInstance().setGamePageController(this);
     }
 
 
@@ -163,7 +160,7 @@ public class GamePageController extends BasicPageController{
     }
 
 
-    public Player getTargetedPlayer(){
+    public DefaultPlayer getTargetedPlayer(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
 
         String target = getTarget();
@@ -191,7 +188,7 @@ public class GamePageController extends BasicPageController{
     public void refresh(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
 
-        Player player = backend.getPlayer(0);
+        DefaultPlayer defaultPlayer = backend.getPlayer(0);
         actionToBeConfirmedLabel.setText("");
         cardActionInfoLabel.setText("");
         massageLabel.setText("");
@@ -277,14 +274,14 @@ public class GamePageController extends BasicPageController{
                 }
                 else {
                     if (isLeft) {
-                        if (!player.getLeftCard().isAlive()) {
+                        if (!defaultPlayer.getLeftCard().isAlive()) {
                             massageLabel.setText("your selected card(left) is dead");
                         } else {
                             actionToBeConfirmedLabel.setText(ActionName.swapOne()+"(left)");
                             swapLeft = true;
                         }
                     } else {
-                        if (!player.getRightCard().isAlive()) {
+                        if (!defaultPlayer.getRightCard().isAlive()) {
                             massageLabel.setText("your selected card(right) is dead");
                         } else {
                             actionToBeConfirmedLabel.setText(ActionName.swapOne()+"(right)");
@@ -327,16 +324,6 @@ public class GamePageController extends BasicPageController{
                 actionToBeConfirmedLabel.setText(ActionName.takeFromTreasury());
 
             }
-            else if(selectedButton == interveneButton){
-                cardActionInfoLabel.setText(ActionInfo.interveneInfo());
-                actionToBeConfirmedLabel.setText(ActionName.intervene());
-
-            }
-            else if(selectedButton == challengeButton){
-                cardActionInfoLabel.setText(ActionInfo.challengeInfo());
-                actionToBeConfirmedLabel.setText(ActionName.challenge());
-
-            }
             else{
                 cardActionInfoLabel.setText("Selected action/card not found");
                 actionToBeConfirmedLabel.setText("Selected action not found");
@@ -347,25 +334,33 @@ public class GamePageController extends BasicPageController{
             actionToBeConfirmedLabel.setText("Skip");
             cardActionInfoLabel.setText("don't challenge");
         }
-        var data = tableView.getItems();
-        data.clear();
-        data.addAll(GameLogicCenter.getInstance().getMoves());
-        loadCoinsAndCards();
+        loadCoinsAndCardsAndTable();
     }
 
 
 
-    public void loadCoinsAndCards(){
+    public void loadCoinsAndCardsAndTable(){
         loadCards();
         loadCoins();
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        loadTable();
+    }
+
+    public void loadTable(){
+        var data = tableView.getItems();
+        data.clear();
+        data.addAll(GameLogicCenter.getInstance().getMoves());
     }
 
     public void loadCards(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
-        Player player = backend.getPlayer(0);
-        Player bot1 = backend.getPlayer(1);
-        Player bot2 = backend.getPlayer(2);
-        Player bot3 = backend.getPlayer(3);
+        DefaultPlayer defaultPlayer = backend.getPlayer(0);
+        DefaultPlayer bot1 = backend.getPlayer(1);
+        DefaultPlayer bot2 = backend.getPlayer(2);
+        DefaultPlayer bot3 = backend.getPlayer(3);
 
         BackgroundImage backgroundImage;
 
@@ -373,43 +368,41 @@ public class GamePageController extends BasicPageController{
                 true, true,
                 false, false);
 
-        if(player.getLeftCard().isAlive()) {
-            backgroundImage = new BackgroundImage(player.getLeftCard().getImage(),
+        if(defaultPlayer.getLeftCard().isAlive()) {
+            backgroundImage = new BackgroundImage(defaultPlayer.getLeftCard().getImage(),
                     null, null, null, backgroundSize);
         }
         else{
-            backgroundImage = new BackgroundImage(player.getLeftCard().getDeadImage(),
+            backgroundImage = new BackgroundImage(defaultPlayer.getLeftCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         playerLeftCardButton.setBackground(new Background(backgroundImage));
 
-        if(player.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(player.getRightCard().getImage(),
+        if(defaultPlayer.getRightCard().isAlive()) {
+            backgroundImage = new BackgroundImage(defaultPlayer.getRightCard().getImage(),
                     null, null, null, backgroundSize);
         }
         else {
-            backgroundImage = new BackgroundImage(player.getRightCard().getDeadImage(),
+            backgroundImage = new BackgroundImage(defaultPlayer.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         playerRightCardButton.setBackground(new Background(backgroundImage));
 
 
-        if(!bot1.getLeftCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot1.getLeftCard().getDeadImage(),
-                    null, null, null, backgroundSize);
-        }
-        else{
+        if (bot1.getLeftCard().isAlive()) {
             backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+        } else {
+            backgroundImage = new BackgroundImage(bot1.getLeftCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         bot1LeftCardButton.setBackground(new Background(backgroundImage));
 
-        if(!bot1.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot1.getRightCard().getDeadImage(),
-                    null, null, null, backgroundSize);
-        }
-        else{
+        if (bot1.getRightCard().isAlive()) {
             backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+        } else {
+            backgroundImage = new BackgroundImage(bot1.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         bot1RightCardButton.setBackground(new Background(backgroundImage));
@@ -425,33 +418,30 @@ public class GamePageController extends BasicPageController{
         }
         bot2LeftCardButton.setBackground(new Background(backgroundImage));
 
-        if(!bot2.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot2.getRightCard().getDeadImage(),
-                    null, null, null, backgroundSize);
-        }
-        else{
+        if (bot2.getRightCard().isAlive()) {
             backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+        } else {
+            backgroundImage = new BackgroundImage(bot2.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         bot2RightCardButton.setBackground(new Background(backgroundImage));
 
 
-        if(!bot3.getLeftCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot3.getLeftCard().getDeadImage(),
-                    null, null, null, backgroundSize);
-        }
-        else{
+        if (bot3.getLeftCard().isAlive()) {
             backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+        } else {
+            backgroundImage = new BackgroundImage(bot3.getLeftCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         bot3LeftCardButton.setBackground(new Background(backgroundImage));
 
-        if(!bot3.getRightCard().isAlive()) {
-            backgroundImage = new BackgroundImage(bot3.getRightCard().getDeadImage(),
-                    null, null, null, backgroundSize);
-        }
-        else{
+        if (bot3.getRightCard().isAlive()) {
             backgroundImage = new BackgroundImage(Card.getBackImage(),
+                    null, null, null, backgroundSize);
+        } else {
+            backgroundImage = new BackgroundImage(bot3.getRightCard().getDeadImage(),
                     null, null, null, backgroundSize);
         }
         bot3RightCardButton.setBackground(new Background(backgroundImage));
@@ -459,12 +449,12 @@ public class GamePageController extends BasicPageController{
 
     public void loadCoins(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
-        Player player = backend.getPlayer(0);
-        Player bot1 = backend.getPlayer(1);
-        Player bot2 = backend.getPlayer(2);
-        Player bot3 = backend.getPlayer(3);
+        DefaultPlayer defaultPlayer = backend.getPlayer(0);
+        DefaultPlayer bot1 = backend.getPlayer(1);
+        DefaultPlayer bot2 = backend.getPlayer(2);
+        DefaultPlayer bot3 = backend.getPlayer(3);
 
-        playerCoinsLabel.setText(""+player.getCoins());
+        playerCoinsLabel.setText(""+ defaultPlayer.getCoins());
         bot1CoinsLabel.setText(""+bot1.getCoins());
         bot2CoinsLabel.setText(""+bot2.getCoins());
         bot3CoinsLabel.setText(""+bot3.getCoins());
@@ -561,24 +551,31 @@ public class GamePageController extends BasicPageController{
 
 
     @FXML
-    void InterveneButtonOnAction(ActionEvent actionEvent) {
-        pressButton(interveneButton);
-    }
-
-    @FXML
-    void ChallengeButtonOnAction(ActionEvent actionEvent) {
-        pressButton(challengeButton);
-    }
-
-
-    @FXML
     void ConfirmButtonOnAction(ActionEvent actionEvent) {
+
         GameLogicCenter backend = GameLogicCenter.getInstance();
-        Player player = backend.getPlayer(0);
-        if(!player.isAlive()){
-            massageLabel.setText("you are dead, wait");
+
+        if(decideIntervene || decideChallenge) {
+            UIPlayer uiPlayer = (UIPlayer) backend.getPlayer(0);
+
+            uiPlayer.setDecided(true);
+
+            clearInterveneDecision();
+            clearChallengeDecision();
+            return;
+        }
+
+        if(backend.getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+
+
+
+        UIPlayer uIPlayer = (UIPlayer) backend.getPlayer(0);
+
+        if(!uIPlayer.isAlive()){
             backend.play();
-            refresh();
             return;
         }
 
@@ -593,54 +590,50 @@ public class GamePageController extends BasicPageController{
             }
         }
         else{
+            Move move = null;
             String result;
             if(selectedButton == incomeButton){
-                result = backend.income(player);
+                result = backend.canIncome(uIPlayer);
+                move = Move.getIncomeMove(uIPlayer);
 
             }
             else if(selectedButton == foreignAidButton){
-                result = backend.foreignAid(player);
+                result = backend.canForeignAid(uIPlayer);
+                move = Move.getForeignAidMove(uIPlayer);
 
             }
             else if(selectedButton == coupButton){
-                result = backend.coup(player, getTargetedPlayer(), false);
-                if(result.length() != 0){
-                    result = backend.coup(player, getTargetedPlayer(), true);
-                }
+                DefaultPlayer victim = getTargetedPlayer();
+                result = backend.canCoup(uIPlayer, victim);
+                move = Move.getCoupMove(uIPlayer, victim);
 
             }
             else if(selectedButton == swapOneButton){
-                result = backend.swapOne(player, swapLeft);
+                result = backend.canSwapOne(uIPlayer, swapLeft);
+                move = Move.getSwapOneMove(uIPlayer, swapLeft);
 
             }
             else if(selectedButton == ambassadorExchangeButton){
                 int[] cards = backend.getTwoDrawableRandomCardNumber();
-                result = backend.ambassadorExchangeTwo(player, cards[0], cards[1]);
+                result = backend.canAmbassadorExchangeTwo(uIPlayer, cards[0], cards[1]);
+                move = Move.getAmbassadorExchangeMove(uIPlayer);
 
             }
             else if(selectedButton == stealButton){
-                result = backend.steal(player, getTargetedPlayer());
+                DefaultPlayer victim = getTargetedPlayer();
+                result = backend.canSteal(uIPlayer, victim);
+                move = Move.getStealMove(uIPlayer, victim);
 
             }
             else if(selectedButton == assassinateButton){
-                result = backend.assassinate(player, getTargetedPlayer(), false);
-                if(result.length() != 0){
-                    result = backend.assassinate(player, getTargetedPlayer(), true);
-                }
+                DefaultPlayer victim = getTargetedPlayer();
+                result = backend.canAssassinate(uIPlayer, victim);
+                move = Move.getAssassinateMove(uIPlayer, victim);
 
             }
             else if(selectedButton == takeFromTreasuryButton){
-                result = backend.takeFromTreasury(player);
-
-            }
-            else if(selectedButton == interveneButton){
-                // TODO
-                result = backend.takeFromTreasury(player);
-
-            }
-            else if(selectedButton == challengeButton){
-                // TODO
-                result = backend.takeFromTreasury(player);
+                result = backend.canTakeFromTreasury(uIPlayer);
+                move = Move.getTakeFromTreasuryMove(uIPlayer);
 
             }
             else{
@@ -649,6 +642,7 @@ public class GamePageController extends BasicPageController{
                 return;
             }
             if(result.length() == 0) {
+                uIPlayer.setMove(move);
                 backend.play();
             }
             else{
@@ -662,5 +656,106 @@ public class GamePageController extends BasicPageController{
             pressButton(selectedButton);
         }
         refresh();
+    }
+
+
+
+    protected boolean decideIntervene = false;
+    protected boolean decideChallenge = false;
+
+    @FXML
+    Button interveneButton;
+    @FXML
+    Button challengeButton;
+
+
+    protected boolean doesIntervene = false;
+    protected boolean doesChallenge = false;
+
+
+
+    public void decideIntervene(Move move){
+        doesIntervene = false;
+        interveneButton.setStyle("-fx-border-color:#ff0000");
+        decideIntervene = true;
+    }
+
+    public void decideChallenge(Move move){
+        doesChallenge = false;
+        challengeButton.setStyle("-fx-border-color:#ff0000");
+        decideChallenge = true;
+    }
+
+
+    public void clearInterveneDecision(){
+        interveneButton.setStyle("");
+        decideIntervene = false;
+    }
+
+    public void clearChallengeDecision(){
+        challengeButton.setStyle("");
+        decideChallenge = false;
+    }
+
+
+    @FXML
+    void InterveneButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        if(decideIntervene) {
+            if (!doesIntervene) {
+                interveneButton.setStyle("-fx-border-color:#00ff00");
+                doesIntervene = true;
+            } else {
+                interveneButton.setStyle("-fx-border-color:#ff0000");
+                doesIntervene = false;
+            }
+        }
+    }
+
+    @FXML
+    void ChallengeButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        if(decideChallenge) {
+            if (!doesChallenge) {
+                challengeButton.setStyle("-fx-border-color:#00ff00");
+                doesChallenge = true;
+            } else {
+                challengeButton.setStyle("-fx-border-color:#ff0000");
+                doesChallenge = false;
+            }
+        }
+    }
+
+
+
+    public void clearResponds() {
+        doesIntervene = false;
+        doesChallenge = false;
+        interveneButton.setStyle("");
+        challengeButton.setStyle("");
+    }
+
+    public boolean doesChallenge(Move move){
+        return doesChallenge;
+    }
+
+    public boolean doesIntervene(Move move){
+        return doesIntervene;
+    }
+
+    public boolean doesKillLeftCard(Move move){
+
+        return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
+    }
+
+    public boolean doesShowLeftCardWhenChallenged(Move move){
+
+        return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
     }
 }

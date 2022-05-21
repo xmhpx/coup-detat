@@ -20,32 +20,56 @@ public class Move {
     }
 
 
-    public static Move getChallengeMove(Player doer, Player challenger){
+    public static Move getChallengeMove(DefaultPlayer doer, DefaultPlayer challenger){
         return new Move(challenger.getType(), doer.getMoveTarget(), MoveType.CHALLENGE);
     }
 
-    public static Move getInterveneMove(Player doer, Player intervener){
+    public static Move getInterveneMove(DefaultPlayer doer, DefaultPlayer intervener){
         return new Move(intervener.getType(), doer.getMoveTarget(), MoveType.INTERVENE);
     }
 
-    public static Move getShowCardMove(Player doer, Card shownCard){
+    public static Move getShowCardMove(DefaultPlayer doer, Card shownCard){
         return new Move(doer.getType(), shownCard.getMoveTarget(), MoveType.SHOW_CARD);
     }
 
-    public static Move getAssassinateMove(Player assassin, Player victim){
+    public static Move getAssassinateMove(DefaultPlayer assassin, DefaultPlayer victim){
         return new Move(assassin.getType(), victim.getMoveTarget(), MoveType.ASSASSINATE);
     }
 
-    public static Move getStealMove(Player captain, Player victim) {
+    public static Move getStealMove(DefaultPlayer captain, DefaultPlayer victim) {
         return new Move(captain.getType(), victim.getMoveTarget(), MoveType.STEAL);
     }
 
-    public static Move getForeignAidMove(Player doer) {
+    public static Move getForeignAidMove(DefaultPlayer doer) {
         return new Move(doer.getType(), MoveTarget.CENTER, MoveType.FOREIGN_AID);
     }
 
-    public static Move getTakeFromTreasuryMove(Player duke) {
+    public static Move getTakeFromTreasuryMove(DefaultPlayer duke) {
         return new Move(duke.getType(), MoveTarget.CENTER, MoveType.TAKE_FROM_TREASURY);
+    }
+
+    public static Move getIncomeMove(DefaultPlayer doer) {
+        return new Move(doer.getType(), MoveTarget.CENTER, MoveType.INCOME);
+    }
+
+    public static Move getCoupMove(DefaultPlayer coup, DefaultPlayer victim) {
+        return new Move(coup.getType(), victim.getMoveTarget(), MoveType.COUP);
+    }
+
+    public static Move getSwapOneMove(DefaultPlayer doer, boolean swapLeft) {
+        MoveType moveType;
+        if(swapLeft) {
+            moveType = MoveType.LEFT;
+        }
+        else{
+            moveType = MoveType.RIGHT;
+        }
+
+        return new Move(doer.getType(), MoveTarget.CENTER, moveType);
+    }
+
+    public static Move getAmbassadorExchangeMove(DefaultPlayer doer) {
+        return new Move(doer.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
     }
 
 

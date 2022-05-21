@@ -1,12 +1,12 @@
 package modules;
 
+import logic.GameLogicCenter;
 import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import pagecontrollers.BasicPageController;
 
-public class Player {
-    private static final Logger log = LogManager.getLogger(Player.class);
+public class DefaultPlayer {
+    private static final Logger log = LogManager.getLogger(DefaultPlayer.class);
 
     protected String name;
     protected Card leftCard;
@@ -15,7 +15,7 @@ public class Player {
     protected DoerType type = null;
 
 
-    public Player(String name, Card leftCard, Card rightCard, int coins, DoerType type){
+    public DefaultPlayer(String name, Card leftCard, Card rightCard, int coins, DoerType type){
         this.name = name;
         this.leftCard = leftCard;
         this.rightCard = rightCard;
@@ -25,7 +25,20 @@ public class Player {
 
 
 
-    public Move getMove(){return null;}
+    public Move getMove(){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+        if(coins >= 10){
+            for(int victimNumber = 3; victimNumber >= 0; victimNumber--){
+                DefaultPlayer victim = backend.getPlayer(victimNumber);
+                if(victim == this){
+                    continue;
+                }
+                if(!victim.isAlive())continue;
+                return Move.getCoupMove(this, victim);
+            }
+        }
+        return Move.getIncomeMove(this);
+    }
 
     public boolean doesChallenge(Move move){
         return false;
@@ -35,13 +48,14 @@ public class Player {
         return false;
     }
 
-    public boolean killsLeftCard(Move move){
+    public boolean doesKillLeftCard(Move move){
         return leftCard.isAlive();
     }
 
-    public boolean showsLeftCardWhenChallenged(Move move){
+    public boolean doesShowLeftCardWhenChallenged(Move move){
         return leftCard.isAlive();
     }
+
 
 
     public MoveTarget getMoveTarget(){

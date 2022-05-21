@@ -90,11 +90,11 @@
          </font></TextField>
 
 
-      <Button fx:id="interveneButton" layoutX="632.0" layoutY="430.0" mnemonicParsing="false" onAction="#InterveneButtonOnAction" text="Intervene">
+      <Button fx:id="interveneButton" layoutX="627.0" layoutY="463.0" mnemonicParsing="false" onAction="#InterveneButtonOnAction" text="Intervene">
          <font>
             <Font size="15.0" />
          </font></Button>
-      <Button fx:id="challengeButton" layoutX="631.0" layoutY="466.0" mnemonicParsing="false" onAction="#ChallengeButtonOnAction" text="Challenge">
+      <Button fx:id="challengeButton" layoutX="625.0" layoutY="498.0" mnemonicParsing="false" onAction="#ChallengeButtonOnAction" text="Challenge">
          <font>
             <Font size="15.0" />
          </font></Button>

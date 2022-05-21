@@ -1,5 +1,5 @@
-2022-05-21 15:36:14:177 INFO [GuiMain.start()] - application started
-2022-05-21 15:37:34:444 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
-2022-05-21 15:37:34:811 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
-2022-05-21 15:37:35:055 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
-2022-05-21 15:37:35:212 ERROR [logic.GameLogicCenter.play()] - bot's move is invalidBOT2 CENTER TAKE_FROM_TREASURY
+2022-05-21 22:35:03:386 INFO [GuiMain.start()] - application started
+2022-05-21 22:35:03:685 INFO [logic.GameLogicCenter.<init>()] - player(0) has Ambassador and Ambassador
+2022-05-21 22:35:03:686 INFO [logic.GameLogicCenter.<init>()] - player(1) has Contessa and Contessa
+2022-05-21 22:35:03:686 INFO [logic.GameLogicCenter.<init>()] - player(2) has Captain and Assassin
+2022-05-21 22:35:03:686 INFO [logic.GameLogicCenter.<init>()] - player(3) has Assassin and Duke

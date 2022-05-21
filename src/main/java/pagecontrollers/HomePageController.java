@@ -13,5 +13,7 @@ public class HomePageController extends BasicPageController{
     @Override
     public void initialize(){
         super.initialize();
+
+        PageControllerStorage.getInstance().setHomePageController(this);
     }
 }
