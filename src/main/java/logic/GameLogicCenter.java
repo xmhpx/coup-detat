@@ -1,6 +1,7 @@
 package logic;
 
 import modules.*;
+import modules.bots.CheaterCoupper;
 import modules.bots.Coupper;
 import modules.bots.Killer;
 import modules.bots.Paranoid;
@@ -48,7 +49,7 @@ public class GameLogicCenter {
         defaultPlayers[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
         defaultPlayers[1] = new Killer("BOT1", null, null, startingCoins, DoerType.BOT1);
         defaultPlayers[2] = new Paranoid("BOT2", null, null, startingCoins, DoerType.BOT2);
-        defaultPlayers[3] = new Coupper("BOT3", null, null, startingCoins, DoerType.BOT3);
+        defaultPlayers[3] = new CheaterCoupper("BOT3", null, null, startingCoins, DoerType.BOT3);
 
 
         Arrays.fill(isDrawable, true);
@@ -541,8 +542,10 @@ public class GameLogicCenter {
             }
             isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
             Card newCard = getOneDrawableRandomCard();
+            log.info(defaultPlayer + " changed " + defaultPlayer.getLeftCard().getName() + " to " + newCard.getName());
             isDrawable[newCard.getCardNumber()] = false;
             defaultPlayer.setLeftCard(newCard);
+
 
         }
         else{
@@ -551,6 +554,7 @@ public class GameLogicCenter {
             }
             isDrawable[defaultPlayer.getRightCard().getCardNumber()] = true;
             Card newCard = getOneDrawableRandomCard();
+            log.info(defaultPlayer + " changed " + defaultPlayer.getRightCard().getName() + " to " + newCard.getName());
             isDrawable[newCard.getCardNumber()] = false;
             defaultPlayer.setRightCard(newCard);
 
@@ -603,6 +607,7 @@ public class GameLogicCenter {
             if(challenger != doer && challenger.isAlive()){
                 if(challenger.doesChallenge(move)){
                     Move challengeMove = Move.getChallengeMove(doer, challenger);
+                    log.info(challengeMove + " |challenge| " + move);
 
                     addMove(challengeMove);
 
@@ -641,6 +646,7 @@ public class GameLogicCenter {
     public boolean continueActionAfterIntervene(DefaultPlayer intervener, Move move, String[] correctInterveneCardNames){
         if(intervener.doesIntervene(move)){
             Move interveneMove = Move.getInterveneMove(intervener, move);
+            log.info(interveneMove + " |intervened| " + move);
 
             addMove(interveneMove);
 
@@ -655,6 +661,7 @@ public class GameLogicCenter {
             if (intervener != doer && intervener.isAlive()) {
                 if (intervener.doesIntervene(move)) {
                     Move interveneMove = Move.getInterveneMove(intervener, move);
+                    log.info(interveneMove + " |intervened| " + move);
 
                     addMove(interveneMove);
 
@@ -676,6 +683,7 @@ public class GameLogicCenter {
 
         DefaultPlayer doer = defaultPlayers[whoToPlay];
         Move move = doer.getMove();
+        log.info(move);
 
         if (!takeAction(doer, move)) {
             log.error(doer.getName() + " " + move + " is an invalid move");
@@ -692,7 +700,7 @@ public class GameLogicCenter {
     //TODO let player choose which card to show
 
     private boolean takeAction(DefaultPlayer doer, Move move) {
-        log.info(doer.getName() + " " + move);
+        log.info(move);
 
         if(move.getMoveType() == MoveType.COUP) {
             DefaultPlayer victim = getPlayerFromMoveTarget(move.getMoveTarget());

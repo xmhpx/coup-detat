@@ -1,35 +1,80 @@
-2022-05-22 01:14:05:854 INFO [GuiMain.start()] - application started
-2022-05-22 01:14:06:297 INFO [logic.GameLogicCenter.<init>()] - player(0) has Captain and Duke
-2022-05-22 01:14:06:297 INFO [logic.GameLogicCenter.<init>()] - player(1) has Assassin and Assassin
-2022-05-22 01:14:06:297 INFO [logic.GameLogicCenter.<init>()] - player(2) has Assassin and Captain
-2022-05-22 01:14:06:297 INFO [logic.GameLogicCenter.<init>()] - player(3) has Captain and Duke
-2022-05-22 01:14:15:471 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT2 STEAL
-2022-05-22 01:14:17:388 INFO [modules.cardtypes.Card.setAlive()] - Assassin died
-2022-05-22 01:14:35:033 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 CENTER FOREIGN_AID
-2022-05-22 01:14:42:012 INFO [logic.GameLogicCenter.takeAction()] - BOT2 BOT2 CENTER INCOME
-2022-05-22 01:14:43:407 INFO [logic.GameLogicCenter.takeAction()] - BOT3 BOT3 CENTER TAKE_FROM_TREASURY
-2022-05-22 01:14:43:409 INFO [modules.cardtypes.Card.setAlive()] - Captain died
-2022-05-22 01:14:54:407 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT3 STEAL
-2022-05-22 01:14:57:432 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 CENTER FOREIGN_AID
-2022-05-22 01:15:01:767 INFO [logic.GameLogicCenter.takeAction()] - BOT3 BOT3 CENTER TAKE_FROM_TREASURY
-2022-05-22 01:15:03:479 INFO [modules.cardtypes.Card.setAlive()] - Captain died
-2022-05-22 01:15:11:945 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT1 STEAL
-2022-05-22 01:15:12:959 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 CENTER FOREIGN_AID
-2022-05-22 01:15:20:099 INFO [logic.GameLogicCenter.takeAction()] - BOT3 BOT3 CENTER TAKE_FROM_TREASURY
-2022-05-22 01:15:26:303 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT3 ASSASSINATE
-2022-05-22 01:15:33:225 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 CENTER FOREIGN_AID
-2022-05-22 01:15:41:766 INFO [logic.GameLogicCenter.takeAction()] - BOT3 BOT3 PLAYER COUP
-2022-05-22 01:15:55:770 INFO [modules.cardtypes.Card.setAlive()] - Duke died
-2022-05-22 01:15:56:835 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT3 STEAL
-2022-05-22 01:15:58:869 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 PLAYER ASSASSINATE
-2022-05-22 01:16:10:546 INFO [logic.GameLogicCenter.takeAction()] - BOT3 BOT3 CENTER TAKE_FROM_TREASURY
-2022-05-22 01:16:15:089 INFO [modules.cardtypes.Card.setAlive()] - Contessa died
-2022-05-22 01:16:23:086 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER CENTER TAKE_FROM_TREASURY
-2022-05-22 01:16:23:609 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 CENTER FOREIGN_AID
-2022-05-22 01:16:32:954 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT1 ASSASSINATE
-2022-05-22 01:16:32:955 INFO [modules.cardtypes.Card.setAlive()] - Assassin died
-2022-05-22 01:16:34:675 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 CENTER FOREIGN_AID
-2022-05-22 01:16:46:798 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER CENTER INCOME
-2022-05-22 01:16:48:384 INFO [logic.GameLogicCenter.takeAction()] - BOT1 BOT1 PLAYER ASSASSINATE
-2022-05-22 01:16:55:341 INFO [logic.GameLogicCenter.takeAction()] - PLAYER PLAYER BOT1 ASSASSINATE
-2022-05-22 01:16:55:342 INFO [modules.cardtypes.Card.setAlive()] - Assassin died
+2022-05-22 01:38:31:761 INFO [GuiMain.start()] - application started
+2022-05-22 01:38:32:012 INFO [logic.GameLogicCenter.<init>()] - player(0) has Captain and Captain
+2022-05-22 01:38:32:012 INFO [logic.GameLogicCenter.<init>()] - player(1) has Contessa and Duke
+2022-05-22 01:38:32:012 INFO [logic.GameLogicCenter.<init>()] - player(2) has Assassin and Contessa
+2022-05-22 01:38:32:013 INFO [logic.GameLogicCenter.<init>()] - player(3) has Assassin and Duke
+2022-05-22 01:38:35:600 INFO [logic.GameLogicCenter.play()] - PLAYER BOT2 STEAL
+2022-05-22 01:38:35:600 INFO [logic.GameLogicCenter.takeAction()] - PLAYER BOT2 STEAL
+2022-05-22 01:38:35:601 INFO [logic.GameLogicCenter.continueActionAfterChallenges()] - BOT2 PLAYER CHALLENGE |challenge| PLAYER BOT2 STEAL
+2022-05-22 01:38:38:717 INFO [logic.GameLogicCenter.changeCard()] - modules.UIPlayer@73e24ede changed Captain to Ambassador
+2022-05-22 01:38:38:717 INFO [modules.cardtypes.Card.setAlive()] - Assassin died
+2022-05-22 01:38:43:990 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:38:43:991 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:38:44:884 INFO [logic.GameLogicCenter.play()] - BOT2 CENTER INCOME
+2022-05-22 01:38:44:884 INFO [logic.GameLogicCenter.takeAction()] - BOT2 CENTER INCOME
+2022-05-22 01:38:45:649 INFO [logic.GameLogicCenter.play()] - BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:38:45:649 INFO [logic.GameLogicCenter.takeAction()] - BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:38:48:066 INFO [logic.GameLogicCenter.continueActionAfterChallenges()] - PLAYER BOT3 CHALLENGE |challenge| BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:38:48:066 INFO [logic.GameLogicCenter.changeCard()] - modules.bots.CheaterCoupper@3f20c3a3 changed Duke to Captain
+2022-05-22 01:38:50:388 INFO [modules.cardtypes.Card.setAlive()] - Ambassador died
+2022-05-22 01:38:57:321 INFO [logic.GameLogicCenter.play()] - PLAYER BOT3 STEAL
+2022-05-22 01:38:57:321 INFO [logic.GameLogicCenter.takeAction()] - PLAYER BOT3 STEAL
+2022-05-22 01:38:57:323 INFO [logic.GameLogicCenter.continueActionAfterChallenges()] - BOT2 PLAYER CHALLENGE |challenge| PLAYER BOT3 STEAL
+2022-05-22 01:39:01:157 INFO [logic.GameLogicCenter.changeCard()] - modules.UIPlayer@73e24ede changed Captain to Ambassador
+2022-05-22 01:39:01:158 INFO [modules.cardtypes.Card.setAlive()] - Contessa died
+2022-05-22 01:39:01:158 INFO [logic.GameLogicCenter.continueActionAfterIntervene()] - BOT3 STEAL INTERVENE |intervened| PLAYER BOT3 STEAL
+2022-05-22 01:39:14:705 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:39:14:706 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:39:17:088 INFO [logic.GameLogicCenter.play()] - BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:39:17:088 INFO [logic.GameLogicCenter.takeAction()] - BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:39:19:805 INFO [logic.GameLogicCenter.continueActionAfterChallenges()] - PLAYER BOT3 CHALLENGE |challenge| BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:39:19:805 INFO [modules.cardtypes.Card.setAlive()] - Assassin died
+2022-05-22 01:39:34:724 INFO [logic.GameLogicCenter.play()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:39:34:724 INFO [logic.GameLogicCenter.takeAction()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:39:35:660 INFO [logic.GameLogicCenter.play()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:39:35:660 INFO [logic.GameLogicCenter.takeAction()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:39:41:815 INFO [logic.GameLogicCenter.play()] - BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:39:41:816 INFO [logic.GameLogicCenter.takeAction()] - BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:39:45:239 INFO [logic.GameLogicCenter.continueActionAfterChallenges()] - PLAYER BOT3 CHALLENGE |challenge| BOT3 CENTER TAKE_FROM_TREASURY
+2022-05-22 01:39:45:239 INFO [modules.cardtypes.Card.setAlive()] - Captain died
+2022-05-22 01:39:50:913 INFO [logic.GameLogicCenter.play()] - PLAYER BOT1 ASSASSINATE
+2022-05-22 01:39:50:913 INFO [logic.GameLogicCenter.takeAction()] - PLAYER BOT1 ASSASSINATE
+2022-05-22 01:39:50:914 INFO [modules.cardtypes.Card.setAlive()] - Captain died
+2022-05-22 01:39:52:829 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:39:52:829 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:02:384 INFO [logic.GameLogicCenter.play()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 01:40:02:384 INFO [logic.GameLogicCenter.takeAction()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 01:40:05:390 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:05:390 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:08:415 INFO [logic.GameLogicCenter.play()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 01:40:08:415 INFO [logic.GameLogicCenter.takeAction()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 01:40:10:078 INFO [logic.GameLogicCenter.play()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:10:079 INFO [logic.GameLogicCenter.takeAction()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:21:508 INFO [logic.GameLogicCenter.play()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:40:21:508 INFO [logic.GameLogicCenter.takeAction()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:40:23:507 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:23:508 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:28:888 INFO [logic.GameLogicCenter.play()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 01:40:28:888 INFO [logic.GameLogicCenter.takeAction()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 01:40:30:451 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:30:452 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:33:102 INFO [logic.GameLogicCenter.play()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:40:33:102 INFO [logic.GameLogicCenter.takeAction()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:40:34:505 INFO [logic.GameLogicCenter.play()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:34:505 INFO [logic.GameLogicCenter.takeAction()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:39:546 INFO [logic.GameLogicCenter.continueActionAfterInterveneAll()] - PLAYER FOREIGN_AID INTERVENE |intervened| BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:44:497 INFO [logic.GameLogicCenter.play()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:40:44:498 INFO [logic.GameLogicCenter.takeAction()] - PLAYER RIGHT SWAP_ONE
+2022-05-22 01:40:45:904 INFO [logic.GameLogicCenter.play()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:45:904 INFO [logic.GameLogicCenter.takeAction()] - BOT1 CENTER FOREIGN_AID
+2022-05-22 01:40:51:560 INFO [logic.GameLogicCenter.play()] - PLAYER CENTER INCOME
+2022-05-22 01:40:51:560 INFO [logic.GameLogicCenter.takeAction()] - PLAYER CENTER INCOME
+2022-05-22 01:40:52:790 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:52:790 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:54:651 INFO [logic.GameLogicCenter.play()] - PLAYER CENTER INCOME
+2022-05-22 01:40:54:651 INFO [logic.GameLogicCenter.takeAction()] - PLAYER CENTER INCOME
+2022-05-22 01:40:56:645 INFO [logic.GameLogicCenter.play()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:40:56:645 INFO [logic.GameLogicCenter.takeAction()] - BOT1 LEFT SWAP_ONE
+2022-05-22 01:41:00:613 INFO [logic.GameLogicCenter.play()] - PLAYER BOT1 ASSASSINATE
+2022-05-22 01:41:00:614 INFO [logic.GameLogicCenter.takeAction()] - PLAYER BOT1 ASSASSINATE
+2022-05-22 01:41:00:615 INFO [modules.cardtypes.Card.setAlive()] - Captain died
