@@ -95,6 +95,10 @@ public class GameLogicCenter {
 
     public void addMove(Move move) {
         moves.add(move);
+        reloadTables();
+    }
+
+    public void reloadTables(){
         PageControllerStorage.getInstance().getGamePageController().loadCoinsAndCardsAndTable();
     }
 
@@ -274,7 +278,6 @@ public class GameLogicCenter {
 
             captain.setCoins(captain.getCoins()+numberOfStolenCoins);
             victim.setCoins(victim.getCoins()-numberOfStolenCoins);
-
         });
 
         thread.start();

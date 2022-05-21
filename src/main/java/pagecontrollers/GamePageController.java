@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.text.Text;
 import logic.GameLogicCenter;
 import modules.ActionInfo;
 import modules.ActionName;
@@ -18,6 +19,8 @@ import modules.UIPlayer;
 import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+
+import java.util.Calendar;
 
 import static java.lang.Thread.sleep;
 
@@ -50,13 +53,13 @@ public class GamePageController extends BasicPageController{
 
 
     @FXML
-    Label playerCoinsLabel;
+    Text playerCoinsText;
     @FXML
-    Label bot1CoinsLabel;
+    Text bot1CoinsText;
     @FXML
-    Label bot2CoinsLabel;
+    Text bot2CoinsText;
     @FXML
-    Label bot3CoinsLabel;
+    Text bot3CoinsText;
 
 
     @FXML
@@ -118,6 +121,22 @@ public class GamePageController extends BasicPageController{
         refresh();
 
         PageControllerStorage.getInstance().setGamePageController(this);
+
+        Thread clock = new Thread() {
+            public void run() {
+                for (int i = 1; i < 10; i++) {
+                    i--;
+                    loadCoinsAndCardsAndTable();
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        clock.start();
     }
 
 
@@ -342,10 +361,6 @@ public class GamePageController extends BasicPageController{
     public void loadCoinsAndCardsAndTable(){
         loadCards();
         loadCoins();
-        if(GameLogicCenter.getInstance().getLock()){
-            massageLabel.setText("LOCKED");
-            return;
-        }
         loadTable();
     }
 
@@ -454,10 +469,10 @@ public class GamePageController extends BasicPageController{
         DefaultPlayer bot2 = backend.getPlayer(2);
         DefaultPlayer bot3 = backend.getPlayer(3);
 
-        playerCoinsLabel.setText(""+ defaultPlayer.getCoins());
-        bot1CoinsLabel.setText(""+bot1.getCoins());
-        bot2CoinsLabel.setText(""+bot2.getCoins());
-        bot3CoinsLabel.setText(""+bot3.getCoins());
+        playerCoinsText.setText(""+ defaultPlayer.getCoins());
+        bot1CoinsText.setText(""+bot1.getCoins());
+        bot2CoinsText.setText(""+bot2.getCoins());
+        bot3CoinsText.setText(""+bot3.getCoins());
     }
 
 
@@ -508,50 +523,50 @@ public class GamePageController extends BasicPageController{
 
 
     @FXML
-    void IncomeButtonOnAction(ActionEvent actionEvent) {
+    void incomeButtonOnAction(ActionEvent actionEvent) {
         pressButton(incomeButton);
     }
 
     @FXML
-    void ForeignAidButtonOnAction(ActionEvent actionEvent) {
+    void foreignAidButtonOnAction(ActionEvent actionEvent) {
         pressButton(foreignAidButton);
     }
 
     @FXML
-    void CoupButtonOnAction(ActionEvent actionEvent) {
+    void coupButtonOnAction(ActionEvent actionEvent) {
         pressButton(coupButton);
     }
 
     @FXML
-    void SwapOneButtonOnAction(ActionEvent actionEvent) {
+    void swapOneButtonOnAction(ActionEvent actionEvent) {
         pressButton(swapOneButton);
     }
 
 
     @FXML
-    void AmbassadorExchangeButtonOnAction(ActionEvent actionEvent) {
+    void ambassadorExchangeButtonOnAction(ActionEvent actionEvent) {
         pressButton(ambassadorExchangeButton);
     }
 
     @FXML
-    void StealButtonOnAction(ActionEvent actionEvent) {
+    void stealButtonOnAction(ActionEvent actionEvent) {
         pressButton(stealButton);
     }
 
     @FXML
-    void AssassinateButtonOnAction(ActionEvent actionEvent) {
+    void assassinateButtonOnAction(ActionEvent actionEvent) {
         pressButton(assassinateButton);
     }
 
     @FXML
-    void TakeFromTreasuryButtonOnAction(ActionEvent actionEvent) {
+    void takeFromTreasuryButtonOnAction(ActionEvent actionEvent) {
         pressButton(takeFromTreasuryButton);
     }
 
 
 
     @FXML
-    void ConfirmButtonOnAction(ActionEvent actionEvent) {
+    void confirmButtonOnAction(ActionEvent actionEvent) {
 
         GameLogicCenter backend = GameLogicCenter.getInstance();
 
@@ -655,7 +670,6 @@ public class GamePageController extends BasicPageController{
         if(selectedButton != null) {
             pressButton(selectedButton);
         }
-        refresh();
     }
 
 
@@ -699,7 +713,7 @@ public class GamePageController extends BasicPageController{
 
 
     @FXML
-    void InterveneButtonOnAction(ActionEvent actionEvent) {
+    void interveneButtonOnAction(ActionEvent actionEvent) {
         if(GameLogicCenter.getInstance().getLock()){
             massageLabel.setText("LOCKED");
             return;
@@ -716,7 +730,7 @@ public class GamePageController extends BasicPageController{
     }
 
     @FXML
-    void ChallengeButtonOnAction(ActionEvent actionEvent) {
+    void challengeButtonOnAction(ActionEvent actionEvent) {
         if(GameLogicCenter.getInstance().getLock()){
             massageLabel.setText("LOCKED");
             return;
@@ -731,6 +745,20 @@ public class GamePageController extends BasicPageController{
             }
         }
     }
+
+
+
+    @FXML
+    Button reloadButton;
+
+    @FXML
+    void reloadButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("steal processing");
+        }
+        loadCoinsAndCardsAndTable();
+    }
+
 
 
 
