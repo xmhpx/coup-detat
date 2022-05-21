@@ -570,13 +570,16 @@ public class GamePageController extends BasicPageController{
 
         GameLogicCenter backend = GameLogicCenter.getInstance();
 
-        if(decideIntervene || decideChallenge) {
+        if(decideIntervene || decideChallenge || decideKillLeftCard || decideShowLeftCardWhenChallenged) {
             UIPlayer uiPlayer = (UIPlayer) backend.getPlayer(0);
 
             uiPlayer.setDecided(true);
 
             clearInterveneDecision();
             clearChallengeDecision();
+            clearKillLeftCardDecision();
+            clearShowLeftCardWhenChallengedDecision();
+
             return;
         }
 
@@ -589,7 +592,7 @@ public class GamePageController extends BasicPageController{
 
         UIPlayer uIPlayer = (UIPlayer) backend.getPlayer(0);
 
-        if(!uIPlayer.isAlive()){
+        if(!uIPlayer.isAlive() || backend.getWhoToPlay() != 0){
             backend.play();
             return;
         }
@@ -656,6 +659,7 @@ public class GamePageController extends BasicPageController{
                 refresh();
                 return;
             }
+
             if(result.length() == 0) {
                 uIPlayer.setMove(move);
                 backend.play();
@@ -676,6 +680,8 @@ public class GamePageController extends BasicPageController{
 
     protected boolean decideIntervene = false;
     protected boolean decideChallenge = false;
+    protected boolean decideKillLeftCard = false;
+    protected boolean decideShowLeftCardWhenChallenged = false;
 
     @FXML
     Button interveneButton;
@@ -685,6 +691,8 @@ public class GamePageController extends BasicPageController{
 
     protected boolean doesIntervene = false;
     protected boolean doesChallenge = false;
+    protected boolean doesKillLeftCard = false;
+    protected boolean doesShowLeftCardWhenChallenged = false;
 
 
 
@@ -700,6 +708,19 @@ public class GamePageController extends BasicPageController{
         decideChallenge = true;
     }
 
+    public void decideKillLeftCard(Move move){
+        doesKillLeftCard = false;
+        leftOrRightTextField.setStyle("-fx-border-color:#ff0000");
+        decideKillLeftCard = true;
+    }
+
+    public void decideShowLeftCardWhenChallenged(Move move){
+        doesShowLeftCardWhenChallenged = false;
+        leftOrRightTextField.setStyle("-fx-border-color:#ff0000");
+        decideShowLeftCardWhenChallenged = true;
+    }
+
+
 
     public void clearInterveneDecision(){
         interveneButton.setStyle("");
@@ -709,6 +730,16 @@ public class GamePageController extends BasicPageController{
     public void clearChallengeDecision(){
         challengeButton.setStyle("");
         decideChallenge = false;
+    }
+
+    public void clearKillLeftCardDecision(){
+        leftOrRightTextField.setStyle("");
+        decideKillLeftCard = false;
+    }
+
+    public void clearShowLeftCardWhenChallengedDecision(){
+        leftOrRightTextField.setStyle("");
+        decideShowLeftCardWhenChallenged = false;
     }
 
 
@@ -765,8 +796,11 @@ public class GamePageController extends BasicPageController{
     public void clearResponds() {
         doesIntervene = false;
         doesChallenge = false;
+        doesKillLeftCard = false;
+        doesShowLeftCardWhenChallenged = false;
         interveneButton.setStyle("");
         challengeButton.setStyle("");
+        leftOrRightTextField.setStyle("");
     }
 
     public boolean doesChallenge(Move move){
@@ -778,12 +812,19 @@ public class GamePageController extends BasicPageController{
     }
 
     public boolean doesKillLeftCard(Move move){
-
-        return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
+        Boolean killLeft = getIsLeft();
+        if(killLeft == null) {
+            return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
+        }
+        return killLeft;
     }
 
     public boolean doesShowLeftCardWhenChallenged(Move move){
 
-        return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
+        Boolean showLeft = getIsLeft();
+        if(showLeft == null) {
+            return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
+        }
+        return showLeft;
     }
 }

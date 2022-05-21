@@ -57,15 +57,15 @@ public class Move {
     }
 
     public static Move getSwapOneMove(DefaultPlayer doer, boolean swapLeft) {
-        MoveType moveType;
+        MoveTarget moveTarget;
         if(swapLeft) {
-            moveType = MoveType.LEFT;
+            moveTarget = MoveTarget.LEFT;
         }
         else{
-            moveType = MoveType.RIGHT;
+            moveTarget = MoveTarget.RIGHT;
         }
 
-        return new Move(doer.getType(), MoveTarget.CENTER, moveType);
+        return new Move(doer.getType(), moveTarget, MoveType.SWAP_ONE);
     }
 
     public static Move getAmbassadorExchangeMove(DefaultPlayer doer) {

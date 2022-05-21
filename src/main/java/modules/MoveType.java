@@ -12,6 +12,4 @@ public enum MoveType {
     INTERVENE,
     CHALLENGE,
     SHOW_CARD,
-    LEFT,
-    RIGHT,
 }

@@ -5,14 +5,11 @@ import modules.bots.Coupper;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import pagecontrollers.GamePageController;
 import pagecontrollers.PageControllerStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-
-import static java.lang.Thread.sleep;
 
 //TODO if someone tries to assassinate but fails, they'll get their money back
 
@@ -229,6 +226,7 @@ public class GameLogicCenter {
                 if (!victim.getRightCard().isAlive()) killLeftCard = true;
             }
             killCard(victim, killLeftCard);
+            lock = false;
         });
 
         thread.start();
@@ -278,6 +276,7 @@ public class GameLogicCenter {
 
             captain.setCoins(captain.getCoins()+numberOfStolenCoins);
             victim.setCoins(victim.getCoins()-numberOfStolenCoins);
+            lock = false;
         });
 
         thread.start();
@@ -314,6 +313,7 @@ public class GameLogicCenter {
             }
 
             defaultPlayer.setCoins(defaultPlayer.getCoins() + 2);
+            lock = false;
         });
 
         thread.start();
@@ -352,6 +352,7 @@ public class GameLogicCenter {
 
 
             duke.setCoins(duke.getCoins()+3);
+            lock = false;
         });
 
         thread.start();
@@ -409,20 +410,28 @@ public class GameLogicCenter {
 
         Move move = Move.getCoupMove(coup, victim);
 
-        boolean killLeftCard = victim.doesKillLeftCard(move);
-        if(killLeftCard) {
-            if (!victim.getLeftCard().isAlive()) killLeftCard = false;
-        }
-        else{
-            if (!victim.getRightCard().isAlive()) killLeftCard = true;
-        }
 
         coup.setCoins(coup.getCoins() - 7);
 
-        if(killLeftCard) victim.getLeftCard().setAlive(false);
-        else victim.getRightCard().setAlive(false);
-
         addMove(move);
+
+        lock = true;
+        Thread thread = new Thread(()-> {
+
+            boolean killLeftCard = victim.doesKillLeftCard(move);
+            if (killLeftCard) {
+                if (!victim.getLeftCard().isAlive()) killLeftCard = false;
+            } else {
+                if (!victim.getRightCard().isAlive()) killLeftCard = true;
+            }
+
+            if (killLeftCard) victim.getLeftCard().setAlive(false);
+            else victim.getRightCard().setAlive(false);
+
+            lock = false;
+        });
+        thread.start();
+
         return "";
     }
 
@@ -591,16 +600,6 @@ public class GameLogicCenter {
         for(int i = 3; i >= 0; i--){
             DefaultPlayer challenger = getPlayer(i);
             if(challenger != doer && challenger.isAlive()){
-                if(i == 0){
-                    ((UIPlayer) challenger).decideChallenge(move);
-                    while(!((UIPlayer) challenger).isDecided()){
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                    }
-                }
                 if(challenger.doesChallenge(move)){
                     Move challengeMove = Move.getChallengeMove(doer, challenger);
 
@@ -633,16 +632,6 @@ public class GameLogicCenter {
     }
 
     public boolean continueActionAfterIntervene(DefaultPlayer doer, DefaultPlayer intervener, Move move, String[] correctInterveneCardNames){
-        if(intervener.getType() == DoerType.PLAYER){
-            ((UIPlayer) intervener).decideIntervene(move);
-            while(!((UIPlayer) intervener).isDecided()){
-                try {
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-        }
         if(intervener.doesIntervene(move)){
             Move interveneMove = Move.getInterveneMove(doer, intervener);
 
@@ -657,16 +646,6 @@ public class GameLogicCenter {
         for(int i = 3; i >= 0; i--) {
             DefaultPlayer intervener = getPlayer(i);
             if (intervener != doer && intervener.isAlive()) {
-                if(i == 0){
-                    ((UIPlayer) intervener).decideIntervene(move);
-                    while(!((UIPlayer) intervener).isDecided()){
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                    }
-                }
                 if (intervener.doesIntervene(move)) {
                     Move interveneMove = Move.getInterveneMove(doer, intervener);
 
@@ -744,7 +723,18 @@ public class GameLogicCenter {
         }
 
         if(move.getMoveType() == MoveType.SWAP_ONE) {
-            boolean swapLeft = doer.getLeftCard().isAlive() && doer.getLeftCard().getMoveTarget() == move.getMoveTarget();
+            boolean swapLeft = MoveTarget.LEFT == move.getMoveTarget();
+            if(swapLeft){
+                if(!doer.getLeftCard().isAlive()) {
+                    swapLeft = false;
+                }
+            }
+            else{
+                if(!doer.getRightCard().isAlive()) {
+                    swapLeft = true;
+                }
+            }
+
             String result = swapOne(doer, swapLeft);
             if(result.length() > 0){
                 log.error("bot's move is invalid " + move);

@@ -12,4 +12,6 @@ public enum MoveTarget {
     CAPTAIN,
     CONTESSA,
     DUKE,
+    LEFT,
+    RIGHT,
 }

@@ -16,9 +16,9 @@ public class Coupper extends DefaultPlayer {
     public Move getMove(){
         GameLogicCenter backend = GameLogicCenter.getInstance();
         if(coins >= 7){
-            for(int victimNumber = 3; victimNumber >= 0; victimNumber--){
+            for(int victimNumber = 0; victimNumber <= 3; victimNumber++){
                 DefaultPlayer victim = backend.getPlayer(victimNumber);
-                if(victim.getType().equals(getType())){
+                if(victim == this){
                     continue;
                 }
                 if(!victim.isAlive())continue;

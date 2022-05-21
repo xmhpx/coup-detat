@@ -152,7 +152,7 @@
       </GridPane>
 
 
-      <Label fx:id="cardActionInfoLabel" alignment="TOP_LEFT" layoutX="179.0" layoutY="409.0" prefWidth="136.0" text="Card/Action Info" wrapText="true">
+      <Label fx:id="cardActionInfoLabel" alignment="TOP_LEFT" layoutX="179.0" layoutY="409.0" prefWidth="180.0" text="Card/Action Info" wrapText="true">
          <font>
             <Font size="15.0" />
          </font></Label>

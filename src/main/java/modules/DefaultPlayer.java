@@ -4,6 +4,7 @@ import logic.GameLogicCenter;
 import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import pagecontrollers.PageControllerStorage;
 
 public class DefaultPlayer {
     private static final Logger log = LogManager.getLogger(DefaultPlayer.class);
@@ -38,6 +39,20 @@ public class DefaultPlayer {
             }
         }
         return Move.getIncomeMove(this);
+    }
+
+
+
+    public void decideChallenge(Move move){
+    }
+
+    public void decideIntervene(Move move){
+    }
+
+    public void decideKillLeftCard(Move move){
+    }
+
+    public void decideShowLeftCardWhenChallenged(Move move){
     }
 
     public boolean doesChallenge(Move move){

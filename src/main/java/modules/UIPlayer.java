@@ -14,37 +14,96 @@ public class UIPlayer extends DefaultPlayer{
     protected Move move = null;
     protected boolean decided = false;
 
-
+    @Override
     public void decideChallenge(Move move){
         decided = false;
         PageControllerStorage.getInstance().getGamePageController().decideChallenge(move);
     }
 
+    @Override
     public void decideIntervene(Move move){
         decided = false;
         PageControllerStorage.getInstance().getGamePageController().decideIntervene(move);
     }
 
+    @Override
+    public void decideKillLeftCard(Move move){
+        decided = false;
+        PageControllerStorage.getInstance().getGamePageController().decideKillLeftCard(move);
+    }
+
+    @Override
+    public void decideShowLeftCardWhenChallenged(Move move){
+        decided = false;
+        PageControllerStorage.getInstance().getGamePageController().decideShowLeftCardWhenChallenged(move);
+    }
+
+
+    @Override
     public boolean doesChallenge(Move move){
+        decideChallenge(move);
+        while(!decided){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return PageControllerStorage.getInstance().getGamePageController().doesChallenge(move);
     }
 
+    @Override
     public boolean doesIntervene(Move move){
+        decideIntervene(move);
+        while(!decided){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return PageControllerStorage.getInstance().getGamePageController().doesIntervene(move);
     }
 
+    @Override
     public boolean doesKillLeftCard(Move move){
-        return PageControllerStorage.getInstance().getGamePageController().doesKillLeftCard(move);
+        decideKillLeftCard(move);
+        while(!decided){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        boolean killLeft = PageControllerStorage.getInstance().getGamePageController().doesKillLeftCard(move);
+        if((killLeft && !leftCard.isAlive()) || (!killLeft && !rightCard.isAlive())){
+            killLeft = !killLeft;
+        }
+        return killLeft;
     }
 
+    @Override
     public boolean doesShowLeftCardWhenChallenged(Move move){
-        return PageControllerStorage.getInstance().getGamePageController().doesShowLeftCardWhenChallenged(move);
+        decideShowLeftCardWhenChallenged(move);
+        while(!decided){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        boolean showLeft = PageControllerStorage.getInstance().getGamePageController().doesShowLeftCardWhenChallenged(move);
+        if((showLeft && !leftCard.isAlive()) || (!showLeft && !rightCard.isAlive())){
+            showLeft = !showLeft;
+        }
+        return showLeft;
     }
 
 
 
     // getters and setters
 
+    @Override
     public Move getMove(){
         if(move != null)return move;
 
