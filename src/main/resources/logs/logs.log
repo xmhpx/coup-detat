@@ -1,5 +1,13 @@
-2022-05-22 02:27:29:117 INFO [GuiMain.start()] - application started
-2022-05-22 02:27:29:383 INFO [logic.GameLogicCenter.<init>()] - player(0) has Ambassador and Assassin
-2022-05-22 02:27:29:384 INFO [logic.GameLogicCenter.<init>()] - player(1) has Ambassador and Ambassador
-2022-05-22 02:27:29:384 INFO [logic.GameLogicCenter.<init>()] - player(2) has Duke and Captain
-2022-05-22 02:27:29:384 INFO [logic.GameLogicCenter.<init>()] - player(3) has Duke and Assassin
+2022-05-22 03:30:53:004 INFO [GuiMain.start()] - application started
+2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 0-th initialCardNumber is random
+2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 1-th initialCardNumber is random
+2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 2-th initialCardNumber is random
+2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 3-th initialCardNumber is random
+2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 4-th initialCardNumber is random
+2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 5-th initialCardNumber is random
+2022-05-22 03:31:18:563 INFO [logic.GameLogicCenter.<init>()] - 6-th initialCardNumber is random
+2022-05-22 03:31:18:563 INFO [logic.GameLogicCenter.<init>()] - 7-th initialCardNumber is random
+2022-05-22 03:31:18:565 INFO [logic.GameLogicCenter.<init>()] - player(0) has Assassin and Contessa
+2022-05-22 03:31:18:566 INFO [logic.GameLogicCenter.<init>()] - player(1) has Duke and Assassin
+2022-05-22 03:31:18:566 INFO [logic.GameLogicCenter.<init>()] - player(2) has Ambassador and Duke
+2022-05-22 03:31:18:566 INFO [logic.GameLogicCenter.<init>()] - player(3) has Assassin and Contessa

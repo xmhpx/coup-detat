@@ -113,6 +113,7 @@ public class GamePageController extends BasicPageController{
         selectedButton = null;
         var data = tableView.getItems();
         data.clear();
+        GameLogicCenter.resetInstance();
         data.addAll(GameLogicCenter.getInstance().getMoves());
         refresh();
 

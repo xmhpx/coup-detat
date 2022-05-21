@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.util.*;
 
-//TODO if someone tries to assassinate but fails, they'll get their money back
 
 public class GameLogicCenter {
     private static final Logger log = LogManager.getLogger(GameLogicCenter.class);
@@ -28,8 +27,12 @@ public class GameLogicCenter {
         return INSTANCE;
     }
 
+    public static void resetInstance(){
+        INSTANCE = new GameLogicCenter();
+    }
 
-    protected static int startingCoins = 2;
+
+    protected static int startingCoins;
 
 
     protected DefaultPlayer[] players;
@@ -37,18 +40,18 @@ public class GameLogicCenter {
     protected ArrayList<Move> moves;
 
     protected boolean[] isDrawable;
-    protected int whoToPlay = 0;
+    protected int whoToPlay;
 
 
     private GameLogicCenter() {
 
-
+        startingCoins = 2;
         players = new DefaultPlayer[4];
-        moves = new ArrayList<>();
         cards = new Card[15];
+        moves = new ArrayList<>();
         isDrawable = new boolean[15];
-
         Arrays.fill(isDrawable, true);
+        whoToPlay = 0;
 
         for (int i = 0; i < 15; i++) {
             if (i < 3) {
@@ -64,60 +67,10 @@ public class GameLogicCenter {
             }
         }
 
-
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
-
-        Settings settings = null;
-
-        int[] initialCardNumbers = new int[8];
-        String[] bots = {
-                "Killer",
-                "Paranoid",
-                "CheaterCoupper",
-        };
-
-        try {
-            BufferedReader settingsReader = new BufferedReader(
-                    new FileReader("settings.json"));
-            settings = gson.fromJson(settingsReader, Settings.class);
-        }
-        catch (FileNotFoundException ignored){
-            try {
-                String settingsJson = gson.toJson(new Settings());
-                FileWriter settingsWriter = new FileWriter("settings.json");
-                settingsWriter.write(settingsJson);
-                settingsWriter.close();
-            } catch (IOException e) {
-                log.error("unable to work with settings.json");
-                e.printStackTrace();
-            }
-        }
-
-        if(settings != null){
-            initialCardNumbers = settings.getInitialCardNumbers();
-            bots = settings.getBots();
-            int coins = settings.getStartingCoins();
-            if(coins < 0 || coins > 20){
-                log.warn("starting coins should be in range 0 to 20 (inclusive)");
-                coins = 2;
-            }
-
-            startingCoins = coins;
-        }
-        else{
-            try {
-                String settingsJson = gson.toJson(new Settings());
-                FileWriter settingsWriter = new FileWriter("settings.json");
-                settingsWriter.write(settingsJson);
-                settingsWriter.close();
-            } catch (IOException e) {
-                log.error("unable to work with settings.json");
-                e.printStackTrace();
-            }
-        }
-
+        Settings settings = Settings.read();
+        String[] bots = settings.getBots();
+        int[] initialCardNumbers = settings.getInitialCardNumbers();
+        startingCoins = settings.getStartingCoins();
 
         players[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
         for(int i = 1; i < 4; i++){
@@ -146,6 +99,7 @@ public class GameLogicCenter {
         for(int i = 0; i < 8; i++) {
             int cardNumber = initialCardNumbers[i];
             if (cardNumber < 0 || cardNumber >= 15 || !isDrawable[cardNumber]) {
+                log.info(i+"-th initialCardNumber is random");
                 cardNumber = getOneDrawableRandomCardNumber();
             }
             isDrawable[cardNumber] = false;

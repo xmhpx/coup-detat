@@ -1,8 +1,1 @@
-2022-05-22 02:27:10:443 INFO [GuiMain.start()] - application started
-2022-05-22 02:27:10:708 ERROR [logic.GameLogicCenter.<init>()] - bot1 is an invalid bot name
-2022-05-22 02:27:10:709 ERROR [logic.GameLogicCenter.<init>()] - bot2 is an invalid bot name
-2022-05-22 02:27:10:709 ERROR [logic.GameLogicCenter.<init>()] - bot3 is an invalid bot name
-2022-05-22 02:27:10:712 INFO [logic.GameLogicCenter.<init>()] - player(0) has Captain and Assassin
-2022-05-22 02:27:10:713 INFO [logic.GameLogicCenter.<init>()] - player(1) has Assassin and Contessa
-2022-05-22 02:27:10:713 INFO [logic.GameLogicCenter.<init>()] - player(2) has Duke and Ambassador
-2022-05-22 02:27:10:713 INFO [logic.GameLogicCenter.<init>()] - player(3) has Contessa and Ambassador
+2022-05-22 03:27:29:122 INFO [GuiMain.start()] - application started

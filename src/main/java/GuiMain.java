@@ -28,7 +28,7 @@ public class GuiMain extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         log.info("application started");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("gamePage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("homePage.fxml"));
         Parent root = loader.load();
 
         Scene scene = new Scene(root);
