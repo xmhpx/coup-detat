@@ -1,6 +1,11 @@
 package modules;
 
+import modules.bots.Paranoid;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class ActionInfo {
+    private static final Logger log = LogManager.getLogger(ActionInfo.class);
 
     public static String incomeInfo(){
         return "Income 1 coin";

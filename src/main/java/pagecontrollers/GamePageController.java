@@ -20,10 +20,6 @@ import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.util.Calendar;
-
-import static java.lang.Thread.sleep;
-
 
 public class GamePageController extends BasicPageController{
     private static final Logger log = LogManager.getLogger(GamePageController.class);
@@ -627,6 +623,10 @@ public class GamePageController extends BasicPageController{
 
             }
             else if(selectedButton == swapOneButton){
+                if(swapLeft == null){
+                    massageLabel.setText("choose left/right to swap");
+                    return;
+                }
                 result = backend.canSwapOne(uIPlayer, swapLeft);
                 move = Move.getSwapOneMove(uIPlayer, swapLeft);
 

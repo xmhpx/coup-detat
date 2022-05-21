@@ -1,5 +1,5 @@
-2022-05-21 23:52:21:322 INFO [GuiMain.start()] - application started
-2022-05-21 23:52:21:551 INFO [logic.GameLogicCenter.<init>()] - player(0) has Duke and Contessa
-2022-05-21 23:52:21:551 INFO [logic.GameLogicCenter.<init>()] - player(1) has Assassin and Assassin
-2022-05-21 23:52:21:551 INFO [logic.GameLogicCenter.<init>()] - player(2) has Captain and Captain
-2022-05-21 23:52:21:551 INFO [logic.GameLogicCenter.<init>()] - player(3) has Contessa and Duke
+2022-05-22 01:13:33:057 INFO [GuiMain.start()] - application started
+2022-05-22 01:13:33:320 INFO [logic.GameLogicCenter.<init>()] - player(0) has Contessa and Captain
+2022-05-22 01:13:33:320 INFO [logic.GameLogicCenter.<init>()] - player(1) has Assassin and Contessa
+2022-05-22 01:13:33:320 INFO [logic.GameLogicCenter.<init>()] - player(2) has Captain and Assassin
+2022-05-22 01:13:33:321 INFO [logic.GameLogicCenter.<init>()] - player(3) has Ambassador and Duke

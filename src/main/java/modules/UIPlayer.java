@@ -2,9 +2,12 @@ package modules;
 
 import logic.GameLogicCenter;
 import modules.cardtypes.Card;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import pagecontrollers.PageControllerStorage;
 
 public class UIPlayer extends DefaultPlayer{
+    private static final Logger log = LogManager.getLogger(UIPlayer.class);
 
     public UIPlayer(String name, Card leftCard, Card rightCard, int coins, DoerType type) {
         super(name, leftCard, rightCard, coins, type);

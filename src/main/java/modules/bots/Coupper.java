@@ -4,8 +4,11 @@ import logic.GameLogicCenter;
 import modules.*;
 import modules.cardtypes.Card;
 import modules.cardtypes.Duke;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class Coupper extends DefaultPlayer {
+    private static final Logger log = LogManager.getLogger(Coupper.class);
 
     public Coupper(String name, Card leftCard, Card rightCard, int coins, DoerType type) {
         super(name, leftCard, rightCard, coins, type);
@@ -30,28 +33,20 @@ public class Coupper extends DefaultPlayer {
 
 
     @Override
-    public boolean doesChallenge(Move move){
-        return false;
-    }
-
-    @Override
-    public boolean doesIntervene(Move move){
-        return false;
-    }
-
-    @Override
     public boolean doesKillLeftCard(Move move){
-        if(leftCard.getName().equals(Duke.name)) {
-            return !rightCard.isAlive();
+        if(leftCard.isAlive() && !leftCard.getName().equals(Duke.name)) {
+            return true;
         }
-        return leftCard.isAlive();
+        if(rightCard.isAlive() && !rightCard.getName().equals(Duke.name)) {
+            return false;
+        }
+        else{
+            return super.doesKillLeftCard(move);
+        }
     }
 
     @Override
     public boolean doesShowLeftCardWhenChallenged(Move move){
-        if(leftCard.getName().equals(Duke.name)) {
-            return leftCard.isAlive();
-        }
-        return !rightCard.isAlive();
+        return super.doesShowLeftCardWhenChallenged(move);
     }
 }

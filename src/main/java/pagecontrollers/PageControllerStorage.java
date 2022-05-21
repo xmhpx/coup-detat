@@ -1,6 +1,12 @@
 package pagecontrollers;
 
+import modules.UIPlayer;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class PageControllerStorage {
+    private static final Logger log = LogManager.getLogger(PageControllerStorage.class);
+
     private static PageControllerStorage INSTANCE;
 
     public static PageControllerStorage getInstance(){

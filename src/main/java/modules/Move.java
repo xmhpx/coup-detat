@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 public class Move {
     private static final Logger log = LogManager.getLogger(Move.class);
+
     private DoerType doer;
     private MoveTarget moveTarget;
     private MoveType moveType;
@@ -24,8 +25,8 @@ public class Move {
         return new Move(challenger.getType(), doer.getMoveTarget(), MoveType.CHALLENGE);
     }
 
-    public static Move getInterveneMove(DefaultPlayer doer, DefaultPlayer intervener){
-        return new Move(intervener.getType(), doer.getMoveTarget(), MoveType.INTERVENE);
+    public static Move getInterveneMove(DefaultPlayer intervener, Move intervenedMove){
+        return new Move(intervener.getType(), MoveTarget.valueOf(""+intervenedMove.getMoveType()), MoveType.INTERVENE);
     }
 
     public static Move getShowCardMove(DefaultPlayer doer, Card shownCard){

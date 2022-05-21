@@ -2,6 +2,8 @@ package logic;
 
 import modules.*;
 import modules.bots.Coupper;
+import modules.bots.Killer;
+import modules.bots.Paranoid;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -44,8 +46,8 @@ public class GameLogicCenter {
         isDrawable = new boolean[15];
 
         defaultPlayers[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
-        defaultPlayers[1] = new Coupper("BOT1", null, null, startingCoins, DoerType.BOT1);
-        defaultPlayers[2] = new Coupper("BOT2", null, null, startingCoins, DoerType.BOT2);
+        defaultPlayers[1] = new Killer("BOT1", null, null, startingCoins, DoerType.BOT1);
+        defaultPlayers[2] = new Paranoid("BOT2", null, null, startingCoins, DoerType.BOT2);
         defaultPlayers[3] = new Coupper("BOT3", null, null, startingCoins, DoerType.BOT3);
 
 
@@ -92,11 +94,6 @@ public class GameLogicCenter {
 
     public void addMove(Move move) {
         moves.add(move);
-        reloadTables();
-    }
-
-    public void reloadTables(){
-        PageControllerStorage.getInstance().getGamePageController().loadCoinsAndCardsAndTable();
     }
 
 
@@ -212,12 +209,16 @@ public class GameLogicCenter {
                 return;
             }
 
+            if(!victim.isAlive())return;
+
             assassin.setCoins(assassin.getCoins() - 3);
 
             String[] correctInterveneCardNames = {Contessa.name};
-            if (!continueActionAfterIntervene(assassin, victim, move, correctInterveneCardNames)) {
+            if (!continueActionAfterIntervene(victim, move, correctInterveneCardNames)) {
                 return;
             }
+
+            if(!victim.isAlive())return;
 
             boolean killLeftCard = victim.doesKillLeftCard(move);
             if (killLeftCard) {
@@ -225,7 +226,7 @@ public class GameLogicCenter {
             } else {
                 if (!victim.getRightCard().isAlive()) killLeftCard = true;
             }
-            killCard(victim, killLeftCard);
+            killCardAndAddMove(victim, killLeftCard);
             lock = false;
         });
 
@@ -268,7 +269,7 @@ public class GameLogicCenter {
 
 
             String[] correctInterveneCardNames = {Captain.name, Ambassador.name};
-            if(!continueActionAfterIntervene(captain, victim, move, correctInterveneCardNames)){
+            if(!continueActionAfterIntervene(victim, move, correctInterveneCardNames)){
                 return;
             }
 
@@ -618,7 +619,13 @@ public class GameLogicCenter {
 
                     if(Arrays.asList(correctCardNames).contains(shownCard.getName())) {
                         changeCard(doer, shownLeft);
-                        killCardAndAddMove(challenger, challenger.doesKillLeftCard(challengeMove));
+                        boolean killLeftCard = challenger.doesKillLeftCard(challengeMove);
+                        if (killLeftCard) {
+                            if (!challenger.getLeftCard().isAlive()) killLeftCard = false;
+                        } else {
+                            if (!challenger.getRightCard().isAlive()) killLeftCard = true;
+                        }
+                        killCardAndAddMove(challenger, killLeftCard);
                     }
                     else{
                         killCardAndAddMove(doer, shownLeft);
@@ -631,13 +638,13 @@ public class GameLogicCenter {
         return true;
     }
 
-    public boolean continueActionAfterIntervene(DefaultPlayer doer, DefaultPlayer intervener, Move move, String[] correctInterveneCardNames){
+    public boolean continueActionAfterIntervene(DefaultPlayer intervener, Move move, String[] correctInterveneCardNames){
         if(intervener.doesIntervene(move)){
-            Move interveneMove = Move.getInterveneMove(doer, intervener);
+            Move interveneMove = Move.getInterveneMove(intervener, move);
 
             addMove(interveneMove);
 
-            return continueActionAfterChallenges(intervener, interveneMove, correctInterveneCardNames);
+            return !continueActionAfterChallenges(intervener, interveneMove, correctInterveneCardNames);
         }
         return true;
     }
@@ -647,7 +654,7 @@ public class GameLogicCenter {
             DefaultPlayer intervener = getPlayer(i);
             if (intervener != doer && intervener.isAlive()) {
                 if (intervener.doesIntervene(move)) {
-                    Move interveneMove = Move.getInterveneMove(doer, intervener);
+                    Move interveneMove = Move.getInterveneMove(intervener, move);
 
                     addMove(interveneMove);
 
@@ -671,6 +678,7 @@ public class GameLogicCenter {
         Move move = doer.getMove();
 
         if (!takeAction(doer, move)) {
+            log.error(doer.getName() + " " + move + " is an invalid move");
             return;
         }
 
@@ -684,6 +692,8 @@ public class GameLogicCenter {
     //TODO let player choose which card to show
 
     private boolean takeAction(DefaultPlayer doer, Move move) {
+        log.info(doer.getName() + " " + move);
+
         if(move.getMoveType() == MoveType.COUP) {
             DefaultPlayer victim = getPlayerFromMoveTarget(move.getMoveTarget());
 

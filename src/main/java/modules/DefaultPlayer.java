@@ -1,7 +1,7 @@
 package modules;
 
 import logic.GameLogicCenter;
-import modules.cardtypes.Card;
+import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import pagecontrollers.PageControllerStorage;
@@ -60,6 +60,21 @@ public class DefaultPlayer {
     }
 
     public boolean doesIntervene(Move move){
+        if(move.getMoveType() == MoveType.STEAL){
+            if( (leftCard.isAlive() &&
+                    (leftCard.getName().equals(Captain.name) || leftCard.getName().equals(Ambassador.name))) ||
+                    (rightCard.isAlive() &&
+                            (rightCard.getName().equals(Captain.name) || rightCard.getName().equals(Ambassador.name)))
+            ) return true;
+        }
+        if(move.getMoveType() == MoveType.ASSASSINATE){
+            if( (leftCard.isAlive() && leftCard.getName().equals(Contessa.name)) ||
+                    (rightCard.isAlive() && rightCard.getName().equals(Contessa.name)))return true;
+        }
+        if(move.getMoveTarget() == MoveTarget.FOREIGN_AID){
+            if( (leftCard.isAlive() && leftCard.getName().equals(Duke.name)) ||
+                    (rightCard.isAlive() && rightCard.getName().equals(Duke.name)))return true;
+        }
         return false;
     }
 
@@ -68,6 +83,33 @@ public class DefaultPlayer {
     }
 
     public boolean doesShowLeftCardWhenChallenged(Move move){
+        if(move.getMoveType() == MoveType.TAKE_FROM_TREASURY){
+            if(rightCard.isAlive() && rightCard.getName().equals(Duke.name))return false;
+            return leftCard.isAlive();
+        }
+        if(move.getMoveType() == MoveType.STEAL){
+            if(rightCard.isAlive() && rightCard.getName().equals(Captain.name))return false;
+            return leftCard.isAlive();
+        }
+        if(move.getMoveType() == MoveType.ASSASSINATE){
+            if(rightCard.isAlive() && rightCard.getName().equals(Assassin.name))return false;
+            return leftCard.isAlive();
+        }
+        if(move.getMoveType() == MoveType.INTERVENE){
+            if(move.getMoveTarget() == MoveTarget.ASSASSINATE){
+                if(rightCard.isAlive() && rightCard.getName().equals(Contessa.name))return false;
+                return leftCard.isAlive();
+            }
+            if(move.getMoveTarget() == MoveTarget.STEAL){
+                if( rightCard.isAlive() &&
+                        (rightCard.getName().equals(Captain.name) || (rightCard.getName().equals(Ambassador.name))))return false;
+                return leftCard.isAlive();
+            }
+            if(move.getMoveTarget() == MoveTarget.FOREIGN_AID){
+                if( rightCard.isAlive() && rightCard.getName().equals(Duke.name))return false;
+                return leftCard.isAlive();
+            }
+        }
         return leftCard.isAlive();
     }
 

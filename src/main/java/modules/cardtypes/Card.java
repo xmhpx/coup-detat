@@ -65,7 +65,13 @@ public class Card {
         return isAlive;
     }
 
-    public void setAlive(boolean alive) {
+    public void setAlive(boolean alive){
+        if(!alive) {
+            log.info(name + " died");
+        }
+        else{
+            log.info(name + " survived");
+        }
         isAlive = alive;
     }
 

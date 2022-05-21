@@ -12,6 +12,9 @@ public enum MoveTarget {
     CAPTAIN,
     CONTESSA,
     DUKE,
+    ASSASSINATE,
+    STEAL,
+    FOREIGN_AID,
     LEFT,
     RIGHT,
 }
