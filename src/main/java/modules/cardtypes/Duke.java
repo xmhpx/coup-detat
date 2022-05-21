@@ -16,15 +16,8 @@ public class Duke extends Card {
 
     public Duke(boolean isAlive, int cardNumber) {
         super(name, description, isAlive, cardNumber);
+        setImagePath(imagePath);
+        setDeadImagePath(deadImagePath);
     }
 
-    @Override
-    public Image getImage(){
-        return new Image(imagePath);
-    }
-
-    @Override
-    public Image getDeadImage(){
-        return new Image(deadImagePath);
-    }
 }

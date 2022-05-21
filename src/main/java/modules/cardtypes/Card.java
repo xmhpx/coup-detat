@@ -9,6 +9,8 @@ public class Card {
 
     protected String name;
     protected String description;
+    protected String imagePath;
+    protected String deadImagePath;
     protected boolean isAlive;
     protected int cardNumber;
     public static final String backImagePath = "C:\\Users\\Hami\\IdeaProjects\\coup-deta\\src\\main\\resources\\Images\\Back.jpeg";
@@ -21,13 +23,12 @@ public class Card {
         this.cardNumber = cardNumber;
     }
 
-
     public Image getImage(){
-        return null;
+        return new Image(imagePath);
     }
 
     public Image getDeadImage(){
-        return null;
+        return new Image(deadImagePath);
     }
 
     public static Image getBackImage(){
@@ -62,11 +63,30 @@ public class Card {
         isAlive = alive;
     }
 
+
     public int getCardNumber() {
         return cardNumber;
     }
 
     public void setCardNumber(int cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+
+    public String getDeadImagePath() {
+        return deadImagePath;
+    }
+
+    public void setDeadImagePath(String deadImagePath) {
+        this.deadImagePath = deadImagePath;
     }
 }

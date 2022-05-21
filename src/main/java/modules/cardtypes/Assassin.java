@@ -15,16 +15,7 @@ public class Assassin extends Card {
 
     public Assassin(boolean isAlive, int cardNumber) {
         super(name, description, isAlive, cardNumber);
-    }
-
-
-    @Override
-    public Image getImage(){
-        return new Image(imagePath);
-    }
-
-    @Override
-    public Image getDeadImage(){
-        return new Image(deadImagePath);
+        setImagePath(imagePath);
+        setDeadImagePath(deadImagePath);
     }
 }
