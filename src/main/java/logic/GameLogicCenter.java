@@ -1,5 +1,7 @@
 package logic;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import modules.*;
 import modules.bots.CheaterCoupper;
 import modules.bots.Coupper;
@@ -8,11 +10,9 @@ import modules.bots.Paranoid;
 import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import pagecontrollers.PageControllerStorage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
 //TODO if someone tries to assassinate but fails, they'll get their money back
 
@@ -29,10 +29,10 @@ public class GameLogicCenter {
     }
 
 
-    protected static final int startingCoins = 2;
+    protected static int startingCoins = 2;
 
 
-    protected DefaultPlayer[] defaultPlayers;
+    protected DefaultPlayer[] players;
     protected Card[] cards;
     protected ArrayList<Move> moves;
 
@@ -41,16 +41,12 @@ public class GameLogicCenter {
 
 
     private GameLogicCenter() {
-        defaultPlayers = new DefaultPlayer[4];
+
+
+        players = new DefaultPlayer[4];
         moves = new ArrayList<>();
         cards = new Card[15];
         isDrawable = new boolean[15];
-
-        defaultPlayers[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
-        defaultPlayers[1] = new Killer("BOT1", null, null, startingCoins, DoerType.BOT1);
-        defaultPlayers[2] = new Paranoid("BOT2", null, null, startingCoins, DoerType.BOT2);
-        defaultPlayers[3] = new CheaterCoupper("BOT3", null, null, startingCoins, DoerType.BOT3);
-
 
         Arrays.fill(isDrawable, true);
 
@@ -68,16 +64,101 @@ public class GameLogicCenter {
             }
         }
 
-        // TODO ability to choose starting cards
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting();
+        Gson gson = builder.create();
+
+        Settings settings = null;
+
+        int[] initialCardNumbers = new int[8];
+        String[] bots = {
+                "Killer",
+                "Paranoid",
+                "CheaterCoupper",
+        };
+
+        try {
+            BufferedReader settingsReader = new BufferedReader(
+                    new FileReader("settings.json"));
+            settings = gson.fromJson(settingsReader, Settings.class);
+        }
+        catch (FileNotFoundException ignored){
+            try {
+                String settingsJson = gson.toJson(new Settings());
+                FileWriter settingsWriter = new FileWriter("settings.json");
+                settingsWriter.write(settingsJson);
+                settingsWriter.close();
+            } catch (IOException e) {
+                log.error("unable to work with settings.json");
+                e.printStackTrace();
+            }
+        }
+
+        if(settings != null){
+            initialCardNumbers = settings.getInitialCardNumbers();
+            bots = settings.getBots();
+            int coins = settings.getStartingCoins();
+            if(coins < 0 || coins > 20){
+                log.warn("starting coins should be in range 0 to 20 (inclusive)");
+                coins = 2;
+            }
+
+            startingCoins = coins;
+        }
+        else{
+            try {
+                String settingsJson = gson.toJson(new Settings());
+                FileWriter settingsWriter = new FileWriter("settings.json");
+                settingsWriter.write(settingsJson);
+                settingsWriter.close();
+            } catch (IOException e) {
+                log.error("unable to work with settings.json");
+                e.printStackTrace();
+            }
+        }
+
+
+        players[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
+        for(int i = 1; i < 4; i++){
+            if(bots[i-1].equals("CheaterCoupper")){
+                players[i] = new CheaterCoupper("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            }
+            else if(bots[i-1].equals("Coupper")){
+                players[i] = new Coupper("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            }
+            else if(bots[i-1].equals("Killer")){
+                players[i] = new Killer("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            }
+            else if(bots[i-1].equals("Paranoid")){
+                players[i] = new Paranoid("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            }
+            else if(bots[i-1].equals("DefaultPlayer")){
+                players[i] = new DefaultPlayer("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            }
+            else{
+                log.error("bot"+i+" is an invalid bot name");
+                players[i] = new DefaultPlayer("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            }
+        }
+
+
+        for(int i = 0; i < 8; i++) {
+            int cardNumber = initialCardNumbers[i];
+            if (cardNumber < 0 || cardNumber >= 15 || !isDrawable[cardNumber]) {
+                cardNumber = getOneDrawableRandomCardNumber();
+            }
+            isDrawable[cardNumber] = false;
+            initialCardNumbers[i] = cardNumber;
+        }
+
 
         for (int i = 0; i < 4; i++) {
-            Card leftCard = getOneDrawableRandomCard();
-            isDrawable[leftCard.getCardNumber()] = false;
-            defaultPlayers[i].setLeftCard(leftCard);
+            Card leftCard = cards[initialCardNumbers[i*2]];
+            players[i].setLeftCard(leftCard);
 
-            Card rightCard = getOneDrawableRandomCard();
-            isDrawable[rightCard.getCardNumber()] = false;
-            defaultPlayers[i].setRightCard(rightCard);
+            Card rightCard = cards[initialCardNumbers[i*2+1]];
+            players[i].setRightCard(rightCard);
 
             log.info("player(" + i + ") has " + leftCard.getName() + " and " + rightCard.getName());
         }
@@ -140,7 +221,7 @@ public class GameLogicCenter {
             return "defaultPlayer is null";
         }
         if (!defaultPlayer.isAlive()) return "doer is dead";
-        if (defaultPlayer != defaultPlayers[whoToPlay]) {
+        if (defaultPlayer != players[whoToPlay]) {
             return "not your turn";
         }
 
@@ -185,7 +266,7 @@ public class GameLogicCenter {
         }
         if (!assassin.isAlive()) return "assassin is dead";
         if (!victim.isAlive()) return "victim is dead";
-        if (assassin != defaultPlayers[whoToPlay]) {
+        if (assassin != players[whoToPlay]) {
             return "not your turn";
         }
 
@@ -246,7 +327,7 @@ public class GameLogicCenter {
         }
         if (!captain.isAlive()) return "doer is dead";
         if (!victim.isAlive()) return "victim is dead";
-        if (captain != defaultPlayers[whoToPlay]) {
+        if (captain != players[whoToPlay]) {
             return "not your turn";
         }
 
@@ -292,7 +373,7 @@ public class GameLogicCenter {
             return "defaultPlayer is null";
         }
         if (!defaultPlayer.isAlive()) return "doer is dead";
-        if (defaultPlayer != defaultPlayers[whoToPlay]) {
+        if (defaultPlayer != players[whoToPlay]) {
             return "not your turn";
         }
 
@@ -329,7 +410,7 @@ public class GameLogicCenter {
             return "duke is null";
         }
         if(!duke.isAlive())return "doer is dead";
-        if(duke != defaultPlayers[whoToPlay]){
+        if(duke != players[whoToPlay]){
             return "not your turn";
         }
 
@@ -368,7 +449,7 @@ public class GameLogicCenter {
             return "defaultPlayer is null";
         }
         if(!defaultPlayer.isAlive())return "doer is dead";
-        if(defaultPlayer != defaultPlayers[whoToPlay]){
+        if(defaultPlayer != players[whoToPlay]){
             return "not your turn";
         }
 
@@ -397,7 +478,7 @@ public class GameLogicCenter {
         }
         if(!coup.isAlive()) return "doer is dead";
         if(!victim.isAlive()) return "victim is dead";
-        if(coup != defaultPlayers[whoToPlay]){
+        if(coup != players[whoToPlay]){
             return "not your turn";
         }
 
@@ -448,7 +529,7 @@ public class GameLogicCenter {
         }
 
         if (!defaultPlayer.isAlive()) return "doer is dead";
-        if (defaultPlayer != defaultPlayers[whoToPlay]) {
+        if (defaultPlayer != players[whoToPlay]) {
             return "not your turn";
         }
 
@@ -681,7 +762,7 @@ public class GameLogicCenter {
     public void play(){
         whoToPlay = getWhoToPlay();
 
-        DefaultPlayer doer = defaultPlayers[whoToPlay];
+        DefaultPlayer doer = players[whoToPlay];
         Move move = doer.getMove();
         log.info(move);
 
@@ -812,7 +893,7 @@ public class GameLogicCenter {
     }
 
     public DefaultPlayer getPlayer(int playerNumber){
-        return defaultPlayers[playerNumber];
+        return players[playerNumber];
     }
 
 
@@ -825,11 +906,11 @@ public class GameLogicCenter {
 
 
     public DefaultPlayer[] getPlayers() {
-        return defaultPlayers;
+        return players;
     }
 
     public void setPlayers(DefaultPlayer[] defaultPlayers) {
-        this.defaultPlayers = defaultPlayers;
+        this.players = defaultPlayers;
     }
 
 
@@ -853,7 +934,7 @@ public class GameLogicCenter {
 
     public int getWhoToPlay(){
         if(whoToPlay >= 4)whoToPlay -= 4;
-        while(!defaultPlayers[whoToPlay].isAlive()){
+        while(!players[whoToPlay].isAlive()){
             whoToPlay++;
             if(whoToPlay >= 4)whoToPlay -= 4;
         }
