@@ -474,6 +474,84 @@ public class GamePageController extends BasicPageController{
 
 
 
+
+    @FXML
+    Button exchangeCard1Button;
+    @FXML
+    Button exchangeCard2Button;
+    @FXML
+    Button exchangeCard3Button;
+    @FXML
+    Button exchangeCard4Button;
+
+    protected Card[] exchangeCards = null;
+
+    public void showExchangeCards(){
+        GameLogicCenter backend = GameLogicCenter.getInstance();
+        UIPlayer uiPlayer = (UIPlayer) backend.getPlayer(0);
+
+        BackgroundImage backgroundImage;
+
+        BackgroundSize backgroundSize = new BackgroundSize(1, 1,
+                true, true,
+                false, false);
+
+        if(exchangeCards[0].isAlive()) {
+            backgroundImage = new BackgroundImage(exchangeCards[0].getImage(),
+                    null, null, null, backgroundSize);
+        }
+        else{
+            backgroundImage = new BackgroundImage(exchangeCards[0].getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
+        exchangeCard1Button.setBackground(new Background(backgroundImage));
+
+
+        if(exchangeCards[1].isAlive()) {
+            backgroundImage = new BackgroundImage(exchangeCards[1].getImage(),
+                    null, null, null, backgroundSize);
+        }
+        else{
+            backgroundImage = new BackgroundImage(exchangeCards[1].getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
+        exchangeCard2Button.setBackground(new Background(backgroundImage));
+
+
+        if(exchangeCards[2].isAlive()) {
+            backgroundImage = new BackgroundImage(exchangeCards[2].getImage(),
+                    null, null, null, backgroundSize);
+        }
+        else{
+            backgroundImage = new BackgroundImage(exchangeCards[2].getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
+        exchangeCard3Button.setBackground(new Background(backgroundImage));
+
+
+        if(exchangeCards[3].isAlive()) {
+            backgroundImage = new BackgroundImage(exchangeCards[3].getImage(),
+                    null, null, null, backgroundSize);
+        }
+        else{
+            backgroundImage = new BackgroundImage(exchangeCards[3].getDeadImage(),
+                    null, null, null, backgroundSize);
+        }
+        exchangeCard4Button.setBackground(new Background(backgroundImage));
+
+        setExchangeCardsVisibility(true);
+    }
+
+
+    public void setExchangeCardsVisibility(boolean visibility){
+        exchangeCard1Button.setVisible(visibility);
+        exchangeCard2Button.setVisible(visibility);
+        exchangeCard3Button.setVisible(visibility);
+        exchangeCard4Button.setVisible(visibility);
+    }
+
+
+
     @FXML
     void playerLeftCardButtonOnAction(ActionEvent actionEvent) {
         pressButton(playerLeftCardButton);
@@ -580,6 +658,29 @@ public class GamePageController extends BasicPageController{
             return;
         }
 
+        if(decideAmbassadorExchange){
+            UIPlayer uiPlayer = (UIPlayer) backend.getPlayer(0);
+
+            int aliveCardsCnt = uiPlayer.getNumberOfAliveCards();
+            int selectedCardsCnt = 0;
+
+            if(chosenCard1 != null)selectedCardsCnt++;
+            if(chosenCard2 != null)selectedCardsCnt++;
+            if(chosenCard3 != null)selectedCardsCnt++;
+            if(chosenCard4 != null)selectedCardsCnt++;
+
+            if(aliveCardsCnt != selectedCardsCnt){
+                massageLabel.setText("choose "+aliveCardsCnt+" cards");
+                return;
+            }
+
+            uiPlayer.setDecided(true);
+
+            clearAmbassadorExchange();
+
+            return;
+        }
+
         if(backend.getLock()){
             massageLabel.setText("LOCKED");
             return;
@@ -633,8 +734,7 @@ public class GamePageController extends BasicPageController{
 
             }
             else if(selectedButton == ambassadorExchangeButton){
-                int[] cards = backend.getTwoDrawableRandomCardNumber();
-                result = backend.canAmbassadorExchangeTwo(uIPlayer, cards[0], cards[1]);
+                result = backend.canAmbassadorExchange(uIPlayer);
                 move = Move.getAmbassadorExchangeMove(uIPlayer);
 
             }
@@ -679,10 +779,16 @@ public class GamePageController extends BasicPageController{
 
 
 
+    protected boolean decideAmbassadorExchange = false;
     protected boolean decideIntervene = false;
     protected boolean decideChallenge = false;
     protected boolean decideKillLeftCard = false;
     protected boolean decideShowLeftCardWhenChallenged = false;
+
+    protected Card chosenCard1 = null;
+    protected Card chosenCard2 = null;
+    protected Card chosenCard3 = null;
+    protected Card chosenCard4 = null;
 
     @FXML
     Button interveneButton;
@@ -696,6 +802,30 @@ public class GamePageController extends BasicPageController{
     protected boolean doesShowLeftCardWhenChallenged = false;
 
 
+
+    public void decideAmbassadorExchange(Move move){
+        chosenCard1 = null;
+        chosenCard2 = null;
+        chosenCard3 = null;
+        chosenCard4 = null;
+
+        exchangeCard1Button.setStyle("-fx-border-color:#ff0000");
+        exchangeCard2Button.setStyle("-fx-border-color:#ff0000");
+        exchangeCard3Button.setStyle("-fx-border-color:#ff0000");
+        exchangeCard4Button.setStyle("-fx-border-color:#ff0000");
+
+        UIPlayer uiPlayer = (UIPlayer) GameLogicCenter.getInstance().getPlayer(0);
+        Card[] randomCards = GameLogicCenter.getInstance().getTwoDrawableRandomCard();
+        exchangeCards = new Card[4];
+        exchangeCards[0] = uiPlayer.getLeftCard();
+        exchangeCards[1] = uiPlayer.getRightCard();
+        exchangeCards[2] = randomCards[0];
+        exchangeCards[3] = randomCards[1];
+
+        setExchangeCardsVisibility(true);
+        decideAmbassadorExchange = true;
+        showExchangeCards();
+    }
 
     public void decideIntervene(Move move){
         doesIntervene = false;
@@ -723,6 +853,15 @@ public class GamePageController extends BasicPageController{
 
 
 
+    public void clearAmbassadorExchange(){
+        exchangeCard1Button.setStyle("");
+        exchangeCard2Button.setStyle("");
+        exchangeCard3Button.setStyle("");
+        exchangeCard4Button.setStyle("");
+        setExchangeCardsVisibility(false);
+        decideAmbassadorExchange = false;
+    }
+
     public void clearInterveneDecision(){
         interveneButton.setStyle("");
         decideIntervene = false;
@@ -741,6 +880,74 @@ public class GamePageController extends BasicPageController{
     public void clearShowLeftCardWhenChallengedDecision(){
         leftOrRightTextField.setStyle("");
         decideShowLeftCardWhenChallenged = false;
+    }
+
+
+
+
+    @FXML
+    void exchangeCard1ButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        if(decideAmbassadorExchange) {
+            if (chosenCard1 == null) {
+                exchangeCard1Button.setStyle("-fx-border-color:#00ff00");
+                chosenCard1 = exchangeCards[0];
+            } else {
+                exchangeCard1Button.setStyle("-fx-border-color:#ff0000");
+                chosenCard1 = null;
+            }
+        }
+    }
+    @FXML
+    void exchangeCard2ButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        if(decideAmbassadorExchange) {
+            if (chosenCard2 == null) {
+                exchangeCard2Button.setStyle("-fx-border-color:#00ff00");
+                chosenCard2 = exchangeCards[1];
+            } else {
+                exchangeCard2Button.setStyle("-fx-border-color:#ff0000");
+                chosenCard2 = null;
+            }
+        }
+    }
+    @FXML
+    void exchangeCard3ButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        if(decideAmbassadorExchange) {
+            if (chosenCard3 == null) {
+                exchangeCard3Button.setStyle("-fx-border-color:#00ff00");
+                chosenCard3 = exchangeCards[2];
+            } else {
+                exchangeCard3Button.setStyle("-fx-border-color:#ff0000");
+                chosenCard3 = null;
+            }
+        }
+    }
+    @FXML
+    void exchangeCard4ButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("LOCKED");
+            return;
+        }
+        if(decideAmbassadorExchange) {
+            if (chosenCard4 == null) {
+                exchangeCard4Button.setStyle("-fx-border-color:#00ff00");
+                chosenCard4 = exchangeCards[3];
+            } else {
+                exchangeCard4Button.setStyle("-fx-border-color:#ff0000");
+                chosenCard4 = null;
+            }
+        }
     }
 
 
@@ -780,28 +987,37 @@ public class GamePageController extends BasicPageController{
 
 
 
-    @FXML
-    Button reloadButton;
 
-    @FXML
-    void reloadButtonOnAction(ActionEvent actionEvent) {
-        if(GameLogicCenter.getInstance().getLock()){
-            massageLabel.setText("steal processing");
+    public Card[] ambassadorExchange(Move move){
+        Card[] exchangedCards = new Card[2];
+
+        UIPlayer uiPlayer = (UIPlayer) GameLogicCenter.getInstance().getPlayer(0);
+
+        int selectedCardsCnt = 0;
+
+        if(!uiPlayer.getLeftCard().isAlive()){
+            exchangedCards[0] = uiPlayer.getLeftCard();
+            selectedCardsCnt++;
         }
-        loadCoinsAndCardsAndTable();
-    }
 
+        if(chosenCard1 != null && chosenCard1.isAlive()){
+            exchangedCards[selectedCardsCnt] = chosenCard1;
+            selectedCardsCnt++;
+        }
+        if(chosenCard2 != null && chosenCard2.isAlive()){
+            exchangedCards[selectedCardsCnt] = chosenCard2;
+            selectedCardsCnt++;
+        }
+        if(chosenCard3 != null && chosenCard3.isAlive()){
+            exchangedCards[selectedCardsCnt] = chosenCard3;
+            selectedCardsCnt++;
+        }
+        if(chosenCard4 != null && chosenCard4.isAlive()){
+            exchangedCards[selectedCardsCnt] = chosenCard4;
+            selectedCardsCnt++;
+        }
 
-
-
-    public void clearResponds() {
-        doesIntervene = false;
-        doesChallenge = false;
-        doesKillLeftCard = false;
-        doesShowLeftCardWhenChallenged = false;
-        interveneButton.setStyle("");
-        challengeButton.setStyle("");
-        leftOrRightTextField.setStyle("");
+        return exchangedCards;
     }
 
     public boolean doesChallenge(Move move){
@@ -827,5 +1043,18 @@ public class GamePageController extends BasicPageController{
             return GameLogicCenter.getInstance().getPlayer(0).getLeftCard().isAlive();
         }
         return showLeft;
+    }
+
+
+
+    @FXML
+    Button reloadButton;
+
+    @FXML
+    void reloadButtonOnAction(ActionEvent actionEvent) {
+        if(GameLogicCenter.getInstance().getLock()){
+            massageLabel.setText("steal processing");
+        }
+        loadCoinsAndCardsAndTable();
     }
 }

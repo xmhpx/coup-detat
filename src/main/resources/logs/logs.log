@@ -1,13 +1,20 @@
-2022-05-22 03:30:53:004 INFO [GuiMain.start()] - application started
-2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 0-th initialCardNumber is random
-2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 1-th initialCardNumber is random
-2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 2-th initialCardNumber is random
-2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 3-th initialCardNumber is random
-2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 4-th initialCardNumber is random
-2022-05-22 03:31:18:562 INFO [logic.GameLogicCenter.<init>()] - 5-th initialCardNumber is random
-2022-05-22 03:31:18:563 INFO [logic.GameLogicCenter.<init>()] - 6-th initialCardNumber is random
-2022-05-22 03:31:18:563 INFO [logic.GameLogicCenter.<init>()] - 7-th initialCardNumber is random
-2022-05-22 03:31:18:565 INFO [logic.GameLogicCenter.<init>()] - player(0) has Assassin and Contessa
-2022-05-22 03:31:18:566 INFO [logic.GameLogicCenter.<init>()] - player(1) has Duke and Assassin
-2022-05-22 03:31:18:566 INFO [logic.GameLogicCenter.<init>()] - player(2) has Ambassador and Duke
-2022-05-22 03:31:18:566 INFO [logic.GameLogicCenter.<init>()] - player(3) has Assassin and Contessa
+2022-05-22 05:13:58:165 INFO [GuiMain.start()] - application started
+2022-05-22 05:13:59:717 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[0] is random
+2022-05-22 05:13:59:718 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[1] is random
+2022-05-22 05:13:59:718 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[4] is random
+2022-05-22 05:13:59:718 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[5] is random
+2022-05-22 05:13:59:718 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[6] is random
+2022-05-22 05:13:59:718 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[7] is random
+2022-05-22 05:13:59:721 INFO [logic.GameLogicCenter.<init>()] - player(0) has Duke and Assassin
+2022-05-22 05:13:59:721 INFO [logic.GameLogicCenter.<init>()] - player(1) has Ambassador and Captain
+2022-05-22 05:13:59:721 INFO [logic.GameLogicCenter.<init>()] - player(2) has Contessa and Duke
+2022-05-22 05:13:59:721 INFO [logic.GameLogicCenter.<init>()] - player(3) has Captain and Ambassador
+2022-05-22 05:14:02:647 INFO [logic.GameLogicCenter.play()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 05:14:02:648 INFO [logic.GameLogicCenter.takeAction()] - PLAYER CENTER FOREIGN_AID
+2022-05-22 05:14:02:649 INFO [logic.GameLogicCenter.continueActionAfterInterveneAll()] - BOT2 FOREIGN_AID INTERVENE |intervened| PLAYER CENTER FOREIGN_AID
+2022-05-22 05:14:07:743 INFO [logic.GameLogicCenter.play()] - BOT1 CENTER AMBASSADOR_EXCHANGE
+2022-05-22 05:14:07:744 INFO [logic.GameLogicCenter.takeAction()] - BOT1 CENTER AMBASSADOR_EXCHANGE
+2022-05-22 05:14:07:745 INFO [logic.GameLogicCenter.continueActionAfterChallenges()] - BOT2 BOT1 CHALLENGE |challenge| BOT1 CENTER AMBASSADOR_EXCHANGE
+2022-05-22 05:14:07:746 INFO [logic.GameLogicCenter.changeCard()] - BOT1 changed Ambassador to Assassin
+2022-05-22 05:14:07:746 INFO [modules.cardtypes.Card.setAlive()] - Contessa died
+2022-05-22 05:14:07:749 INFO [logic.GameLogicCenter.lambda$ambassadorExchange$0()] - BOT1 used to have (Assassin, Captain) now has (Assassin Captain)

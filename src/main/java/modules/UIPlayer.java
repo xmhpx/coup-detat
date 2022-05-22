@@ -1,10 +1,13 @@
 package modules;
 
+import javafx.fxml.FXML;
 import logic.GameLogicCenter;
 import modules.cardtypes.Card;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import pagecontrollers.PageControllerStorage;
+
+import java.util.Arrays;
 
 public class UIPlayer extends DefaultPlayer{
     private static final Logger log = LogManager.getLogger(UIPlayer.class);
@@ -16,6 +19,13 @@ public class UIPlayer extends DefaultPlayer{
 
     protected Move move = null;
     protected boolean decided = false;
+
+
+    @Override
+    public void decideAmbassadorExchange(Move move){
+        decided = false;
+        PageControllerStorage.getInstance().getGamePageController().decideAmbassadorExchange(move);
+    }
 
     @Override
     public void decideChallenge(Move move){
@@ -41,6 +51,21 @@ public class UIPlayer extends DefaultPlayer{
         PageControllerStorage.getInstance().getGamePageController().decideShowLeftCardWhenChallenged(move);
     }
 
+
+
+    public Card[] ambassadorExchange(Move move){
+        decideAmbassadorExchange(move);
+        while(!decided){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        var res = PageControllerStorage.getInstance().getGamePageController().ambassadorExchange(move);
+        log.info(Arrays.toString(res));
+        return res;
+    }
 
     @Override
     public boolean doesChallenge(Move move){

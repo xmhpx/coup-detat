@@ -3,8 +3,12 @@ package modules.bots;
 import logic.GameLogicCenter;
 import modules.*;
 import modules.cardtypes.*;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class CheaterCoupper extends Coupper{
+    private static final Logger log = LogManager.getLogger(CheaterCoupper.class);
+
     public CheaterCoupper(String name, Card leftCard, Card rightCard, int coins, DoerType type) {
         super(name, leftCard, rightCard, coins, type);
     }

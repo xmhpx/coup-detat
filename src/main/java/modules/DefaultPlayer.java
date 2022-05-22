@@ -42,6 +42,8 @@ public class DefaultPlayer {
     }
 
 
+    public void decideAmbassadorExchange(Move move){
+    }
 
     public void decideChallenge(Move move){
     }
@@ -55,6 +57,12 @@ public class DefaultPlayer {
     public void decideShowLeftCardWhenChallenged(Move move){
     }
 
+
+
+    public Card[] ambassadorExchange(Move move){
+        return new Card[]{leftCard, rightCard};
+    }
+
     public boolean doesChallenge(Move move){
         return false;
     }
@@ -66,7 +74,7 @@ public class DefaultPlayer {
         if(move.getMoveType() == MoveType.ASSASSINATE){
             if(hasCard(Contessa.name))return true;
         }
-        if(move.getMoveTarget() == MoveTarget.FOREIGN_AID){
+        if(move.getMoveType() == MoveType.FOREIGN_AID){
             if(hasCard(Duke.name))return true;
         }
         return false;
@@ -120,6 +128,13 @@ public class DefaultPlayer {
         return false;
     }
 
+
+    public int getNumberOfAliveCards(){
+        int cnt = 0;
+        if(leftCard.isAlive())cnt++;
+        if(rightCard.isAlive())cnt++;
+        return cnt;
+    }
 
     // getters and setters
 

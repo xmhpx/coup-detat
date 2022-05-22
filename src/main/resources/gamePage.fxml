@@ -29,8 +29,8 @@
       <Button fx:id="bot2LeftCardButton" layoutX="379.0" layoutY="20.0" mnemonicParsing="false" onAction="#bot2LeftCardButtonOnAction" prefHeight="140.0" prefWidth="99.0" />
       <Button fx:id="bot2RightCardButton" layoutX="491.0" layoutY="20.0" mnemonicParsing="false" onAction="#bot2RightCardButtonOnAction" prefHeight="140.0" prefWidth="99.0" />
 
-      <Button fx:id="bot3LeftCardButton" layoutX="709.0" layoutY="240.0" mnemonicParsing="false" onAction="#bot3LeftCardButtonOnAction" prefHeight="140.0" prefWidth="99.0" />
-      <Button fx:id="bot3RightCardButton" layoutX="819.0" layoutY="240.0" mnemonicParsing="false" onAction="#bot3RightCardButtonOnAction" prefHeight="140.0" prefWidth="99.0" />
+      <Button fx:id="bot3LeftCardButton" layoutX="725.0" layoutY="240.0" mnemonicParsing="false" onAction="#bot3LeftCardButtonOnAction" prefHeight="140.0" prefWidth="99.0" />
+      <Button fx:id="bot3RightCardButton" layoutX="835.0" layoutY="240.0" mnemonicParsing="false" onAction="#bot3RightCardButtonOnAction" prefHeight="140.0" prefWidth="99.0" />
 
 
       <Text fx:id="playerCoinsText" layoutX="466.0" layoutY="437.0" text="Player Coins">
@@ -45,7 +45,7 @@
          <font>
             <Font size="20.0" />
          </font></Text>
-      <Text fx:id="bot3CoinsText" layoutX="670.0" layoutY="311.0" text="Bot3 Coins">
+      <Text fx:id="bot3CoinsText" layoutX="686.0" layoutY="311.0" text="Bot3 Coins">
          <font>
             <Font size="20.0" />
          </font></Text>
@@ -180,5 +180,9 @@
          <font>
             <Font size="15.0" />
          </font></TextField>
+      <Button fx:id="exchangeCard1Button" layoutX="269.0" layoutY="240.0" mnemonicParsing="false" onAction="#exchangeCard1ButtonOnAction" prefHeight="140.0" prefWidth="99.0" visible="false" />
+      <Button fx:id="exchangeCard2Button" layoutX="378.0" layoutY="240.0" mnemonicParsing="false" onAction="#exchangeCard2ButtonOnAction" prefHeight="140.0" prefWidth="99.0" visible="false" />
+      <Button fx:id="exchangeCard3Button" layoutX="487.0" layoutY="240.0" mnemonicParsing="false" onAction="#exchangeCard3ButtonOnAction" prefHeight="140.0" prefWidth="99.0" visible="false" />
+      <Button fx:id="exchangeCard4Button" layoutX="597.0" layoutY="240.0" mnemonicParsing="false" onAction="#exchangeCard4ButtonOnAction" prefHeight="140.0" prefWidth="99.0" visible="false" />
    </children>
 </AnchorPane>

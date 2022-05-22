@@ -1,7 +1,5 @@
 package logic;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import modules.*;
 import modules.bots.CheaterCoupper;
 import modules.bots.Coupper;
@@ -11,7 +9,6 @@ import modules.cardtypes.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.io.*;
 import java.util.*;
 
 
@@ -74,24 +71,16 @@ public class GameLogicCenter {
 
         players[0] = new UIPlayer("PLAYER", null, null, startingCoins, DoerType.PLAYER);
         for(int i = 1; i < 4; i++){
-            if(bots[i-1].equals("CheaterCoupper")){
-                players[i] = new CheaterCoupper("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
-            }
-            else if(bots[i-1].equals("Coupper")){
-                players[i] = new Coupper("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
-            }
-            else if(bots[i-1].equals("Killer")){
-                players[i] = new Killer("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
-            }
-            else if(bots[i-1].equals("Paranoid")){
-                players[i] = new Paranoid("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
-            }
-            else if(bots[i-1].equals("DefaultPlayer")){
-                players[i] = new DefaultPlayer("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
-            }
-            else{
-                log.error("bot"+i+" is an invalid bot name");
-                players[i] = new DefaultPlayer("BOT"+i, null, null, startingCoins, DoerType.valueOf("BOT"+i));
+            switch (bots[i - 1]) {
+                case "CheaterCoupper" -> players[i] = new CheaterCoupper("BOT" + i, null, null, startingCoins, DoerType.valueOf("BOT" + i));
+                case "Coupper" -> players[i] = new Coupper("BOT" + i, null, null, startingCoins, DoerType.valueOf("BOT" + i));
+                case "Killer" -> players[i] = new Killer("BOT" + i, null, null, startingCoins, DoerType.valueOf("BOT" + i));
+                case "Paranoid" -> players[i] = new Paranoid("BOT" + i, null, null, startingCoins, DoerType.valueOf("BOT" + i));
+                case "DefaultPlayer" -> players[i] = new DefaultPlayer("BOT" + i, null, null, startingCoins, DoerType.valueOf("BOT" + i));
+                default -> {
+                    log.warn("bot" + i + " is an invalid bot name");
+                    players[i] = new DefaultPlayer("BOT" + i, null, null, startingCoins, DoerType.valueOf("BOT" + i));
+                }
             }
         }
 
@@ -99,7 +88,7 @@ public class GameLogicCenter {
         for(int i = 0; i < 8; i++) {
             int cardNumber = initialCardNumbers[i];
             if (cardNumber < 0 || cardNumber >= 15 || !isDrawable[cardNumber]) {
-                log.info(i+"-th initialCardNumber is random");
+                log.info("initialCardNumber["+i+"] is random");
                 cardNumber = getOneDrawableRandomCardNumber();
             }
             isDrawable[cardNumber] = false;
@@ -133,44 +122,8 @@ public class GameLogicCenter {
     }
 
 
-    //TODO buggy if exchanges cards with his own cards
-    //TODO ambassador exchange
 
-//    public String ambassadorExchangeOne(DefaultPlayer defaultPlayer, int drawnCardNumber, boolean exchangeLeftCard) {
-//        if (defaultPlayer == null) {
-//            return "defaultPlayer is null";
-//        }
-//        if (!defaultPlayer.isAlive()) return "doer is dead";
-//        if (defaultPlayer != defaultPlayers[whoToPlay]) {
-//            return "not your turn";
-//        }
-//
-//        if (mustCoup(defaultPlayer)) return "must coup";
-//
-//        if (!isDrawable[drawnCardNumber]) {
-//            return "targeted card(" + drawnCardNumber + ") is not drawable";
-//        }
-//
-//        if (exchangeLeftCard) {
-//            if (!defaultPlayer.getLeftCard().isAlive()) return "targeted card(left) is not drawable";
-//            int exchangedCardNumber = defaultPlayer.getLeftCard().getCardNumber();
-//            isDrawable[exchangedCardNumber] = true;
-//            isDrawable[drawnCardNumber] = false;
-//            defaultPlayer.setLeftCard(cards[drawnCardNumber]);
-//        } else {
-//            if (!defaultPlayer.getRightCard().isAlive()) return "targeted card(right) is not drawable";
-//            int exchangedCardNumber = defaultPlayer.getRightCard().getCardNumber();
-//            isDrawable[exchangedCardNumber] = true;
-//            isDrawable[drawnCardNumber] = false;
-//            defaultPlayer.setRightCard(cards[drawnCardNumber]);
-//        }
-//
-//        addMove(defaultPlayer.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
-//        return "";
-//    }
-
-
-    public String canAmbassadorExchangeTwo(DefaultPlayer defaultPlayer, int cardNumber1, int cardNumber2) {
+    public String canAmbassadorExchange(DefaultPlayer defaultPlayer) {
         if (defaultPlayer == null) {
             return "defaultPlayer is null";
         }
@@ -181,31 +134,42 @@ public class GameLogicCenter {
 
         if (mustCoup(defaultPlayer)) return "must coup";
 
-        if (!isDrawable[cardNumber1]) {
-            return "targeted card(" + cardNumber1 + ") is not drawable";
-        }
-        if (!isDrawable[cardNumber2]) {
-            return "targeted card(" + cardNumber2 + ") is not drawable";
-        }
         return "";
     }
 
-    public String ambassadorExchangeTwo(DefaultPlayer defaultPlayer, int cardNumber1, int cardNumber2) {
-        String result = canAmbassadorExchangeTwo(defaultPlayer, cardNumber1, cardNumber2);
+    public String ambassadorExchange(DefaultPlayer defaultPlayer) {
+        String result = canAmbassadorExchange(defaultPlayer);
         if(result.length() > 0)return result;
 
-        if (!defaultPlayer.getLeftCard().isAlive()) return "targeted card(left) is not drawable";
-        if (!defaultPlayer.getRightCard().isAlive()) return "targeted card(right) is not drawable";
+        Move move = Move.getAmbassadorExchangeMove(defaultPlayer);
+        addMove(move);
 
-        isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
-        isDrawable[defaultPlayer.getRightCard().getCardNumber()] = true;
-        isDrawable[cardNumber1] = false;
-        isDrawable[cardNumber2] = false;
 
-        defaultPlayer.setLeftCard(cards[cardNumber1]);
-        defaultPlayer.setRightCard(cards[cardNumber2]);
+        lock = true;
+        Thread thread = new Thread(()-> {
+            String[] correctCardNames = {Ambassador.name};
+            if (!continueActionAfterChallenges(defaultPlayer, move, correctCardNames)) {
+                return;
+            }
 
-        addMove(defaultPlayer.getType(), MoveTarget.CENTER, MoveType.AMBASSADOR_EXCHANGE);
+            Card[] newCards = defaultPlayer.ambassadorExchange(move);
+
+            isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
+            isDrawable[defaultPlayer.getRightCard().getCardNumber()] = true;
+            String usedToHave = defaultPlayer.getLeftCard().getName() + ", " + defaultPlayer.getRightCard().getName();
+
+            defaultPlayer.setLeftCard(newCards[0]);
+            defaultPlayer.setRightCard(newCards[1]);
+
+            isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = false;
+            isDrawable[defaultPlayer.getRightCard().getCardNumber()] = false;
+            log.info(defaultPlayer.getName() + " used to have (" + usedToHave + ") now has (" + defaultPlayer.getLeftCard().getName() + " " + defaultPlayer.getRightCard().getName() + ")");
+
+            lock = false;
+        });
+
+        thread.start();
+
         return "";
     }
 
@@ -577,7 +541,7 @@ public class GameLogicCenter {
             }
             isDrawable[defaultPlayer.getLeftCard().getCardNumber()] = true;
             Card newCard = getOneDrawableRandomCard();
-            log.info(defaultPlayer + " changed " + defaultPlayer.getLeftCard().getName() + " to " + newCard.getName());
+            log.info(defaultPlayer.getName() + " changed " + defaultPlayer.getLeftCard().getName() + " to " + newCard.getName());
             isDrawable[newCard.getCardNumber()] = false;
             defaultPlayer.setLeftCard(newCard);
 
@@ -642,7 +606,7 @@ public class GameLogicCenter {
             if(challenger != doer && challenger.isAlive()){
                 if(challenger.doesChallenge(move)){
                     Move challengeMove = Move.getChallengeMove(doer, challenger);
-                    log.info(challengeMove + " |challenge| " + move);
+                    log.info(challengeMove + " |challenged| " + move);
 
                     addMove(challengeMove);
 
@@ -718,10 +682,9 @@ public class GameLogicCenter {
 
         DefaultPlayer doer = players[whoToPlay];
         Move move = doer.getMove();
-        log.info(move);
 
         if (!takeAction(doer, move)) {
-            log.error(doer.getName() + " " + move + " is an invalid move");
+            log.error(move + " is an invalid move");
             return;
         }
 
@@ -730,9 +693,6 @@ public class GameLogicCenter {
         lock = false;
     }
 
-
-
-    //TODO let player choose which card to show
 
     private boolean takeAction(DefaultPlayer doer, Move move) {
         log.info(move);
@@ -811,6 +771,16 @@ public class GameLogicCenter {
             DefaultPlayer victim = getPlayerFromMoveTarget(move.getMoveTarget());
 
             String result = steal(doer, victim);
+            if(result.length() > 0){
+                log.error("bot's move is invalid " + move);
+                return false;
+            }
+            return true;
+        }
+
+        if(move.getMoveType() == MoveType.AMBASSADOR_EXCHANGE) {
+
+            String result = ambassadorExchange(doer);
             if(result.length() > 0){
                 log.error("bot's move is invalid " + move);
                 return false;

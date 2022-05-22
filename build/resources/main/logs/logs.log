@@ -1,1 +1,12 @@
-2022-05-22 03:27:29:122 INFO [GuiMain.start()] - application started
+2022-05-22 05:13:51:864 INFO [GuiMain.start()] - application started
+2022-05-22 05:13:53:392 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[0] is random
+2022-05-22 05:13:53:392 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[1] is random
+2022-05-22 05:13:53:392 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[3] is random
+2022-05-22 05:13:53:392 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[4] is random
+2022-05-22 05:13:53:392 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[5] is random
+2022-05-22 05:13:53:393 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[6] is random
+2022-05-22 05:13:53:393 INFO [logic.GameLogicCenter.<init>()] - initialCardNumber[7] is random
+2022-05-22 05:13:53:395 INFO [logic.GameLogicCenter.<init>()] - player(0) has Captain and Contessa
+2022-05-22 05:13:53:395 INFO [logic.GameLogicCenter.<init>()] - player(1) has Ambassador and Duke
+2022-05-22 05:13:53:395 INFO [logic.GameLogicCenter.<init>()] - player(2) has Ambassador and Contessa
+2022-05-22 05:13:53:395 INFO [logic.GameLogicCenter.<init>()] - player(3) has Duke and Assassin
